@@ -6,8 +6,6 @@ function [t_arr,f_arr] = read_data(interp_scheme,data_res,q,frac_data,input_fold
     marker = sprintf("%s-%d-%d-%.2f",interp_scheme,data_res,q,frac_data);
     file_name = strcat(input_folder,marker,"_",end_tag);
     
-    disp(file_name);
-
     timeseries = importdata(file_name);
     t_arr = timeseries(:,1);
     f_arr = timeseries(:,2);

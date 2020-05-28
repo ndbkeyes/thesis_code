@@ -1,6 +1,6 @@
 %% ===== DETECT SLOPE CHANGES ===== %%
 
-function [t_matrix,w_matrix] = slopes_regression(interp_scheme,q,data_res,frac_data,result_folder,max_w,lowerbound,upperbound)
+function one_slope = slopes_regression(interp_scheme,q,data_res,frac_data,result_folder,max_e,lowerbound,upperbound)
 
     hold on;
 
@@ -8,10 +8,7 @@ function [t_matrix,w_matrix] = slopes_regression(interp_scheme,q,data_res,frac_d
     [t_arr,f_arr] = read_data(interp_scheme,data_res,q,frac_data,result_folder);
     t_arr = log10(t_arr);
     f_arr = log10(f_arr);
-    
-    
-    
-    
+
     % Cut down data to desired slope segment
     small = find(t_arr > lowerbound);
     starti = small(1);
@@ -20,87 +17,81 @@ function [t_matrix,w_matrix] = slopes_regression(interp_scheme,q,data_res,frac_d
     t_arr = t_arr(starti:endi);
     f_arr = f_arr(starti:endi);
     
-    % check that max window size isn't too large
-    N = length(t_arr);
-    if N/max_w < 2
-        max_w = floor(N/2);
-        fprintf("max w value too large; reduced to N=%d\n",N);
-    end
-    
-    disp(N);
+    range = upperbound - lowerbound;
     
     % prep for loop
-    last_dpw = 0;
-    skip = 0;
-    tiledlayout(4,5);
+    layout = tiledlayout(4,1);
+    layout.Units = 'inches';
+    layout.OuterPosition = [0.25 0.25 3 7];
+    
     t_matrix = {};
-    w_matrix = {};        
+    w_matrix = {};    
+    skip = 0;
 
-    % loop over window sizes
-    for w=max_w:-1:1     
+    % loop over window sizes (exponentially)
+    for e=0:1:max_e
         
-        dpw = floor(N / w);  % data per window
+        num_windows = 2^e;
+        window_size = range / num_windows;
         
-        % loop over windows
-        for i=1:floor(N/dpw)
-                   
-            % want to skip window numbers that give same number of data points per window
-            if dpw == last_dpw || dpw == 1
+        % loop over window indices
+        for i=1:2^e
+            
+            % trim data to i-th window
+            inds = find(t_arr >= (min(t_arr)+(i-1)*window_size) & t_arr < (min(t_arr)+i*window_size) );
+            t_fit = t_arr(inds);
+            f_fit = f_arr(inds);
+            
+            % check if window doesn't have enough data
+            if length(t_fit) < 2
                 skip = 1;
-                break
-            else
-                skip = 0;
+                break;
             end
 
-            % trim data to ith window
-            startind = (i-1)*dpw+1;
-            endind = min((i)*dpw, length(t_arr));        
-            t_fit = t_arr(startind:endind);
-            f_fit = f_arr(startind:endind);
-            
-            % add column of ones to t arr for regression
-            col = ones(endind-startind+1, 1);
+            % add column of ones to t_arr for regression
+            col = ones(length(t_fit), 1);
             t_fit_col = [col t_fit];
             
-            fprintf("w=%d, i=%d; dpw=%d; startind=%d, endind=%d\n", w, i, dpw, startind, endind);
-            
             % find avg-t and slope values
-            t = mean(t_fit);
+            t = (lowerbound+(i-1)*window_size) + window_size/2;
             beta = t_fit_col \ f_fit; % using backslash operator to get slope
             slope = beta(2);
-
+            
             % append to this window size's array
-            t_matrix{w,i} = t;
-            w_matrix{w,i} = slope;
-
+            t_matrix{e+1,i} = t;
+            w_matrix{e+1,i} = slope;
                         
-        end    
+        end
         
-        % if the data per window is different from prev run, plot!
-        if skip == 0
+        % if windows have become too small, stop
+        if skip == 1
+            break;
+        end
             
-            % plot the slopes for this window size
-            x = cell2mat(t_matrix(w,:));
-            y = cell2mat(w_matrix(w,:));
+        % plot the slopes for this window size
+        x = cell2mat(t_matrix(e+1,:));
+        y = cell2mat(w_matrix(e+1,:));
 
-            nexttile
-            % plotting the slopes
-            color = [0 0 0];
-            p = plot(x,y,"LineWidth", 0.1, "Color", color, "MarkerFaceColor", color);
-            p.Marker = "*";
-                   
-            xlim([lowerbound*0.95, upperbound*1.05]);
-            ylim([-0.5,2.5]);
-            title(sprintf("w = %d",w));
-            
-        % if dpw same as prev window, reset skip vbl and update dpw
-        else
-            
-            skip = 0;
-            last_dpw = dpw;
-            
+        % plotting the slopes
+        nexttile
+        color = [0 0 0];
+        p = plot(x,y,"LineWidth", 0.1, "Color", color, "MarkerFaceColor", color);
+
+        p.Marker = "*";
+        xlim([lowerbound-0.05, upperbound+0.05]);
+        ylim([-0.5,2.5]);
+        title(sprintf("%d windows",num_windows));
+        
+        
+        if e==0 && i==1
+            fprintf("w=1 - %s %d , %.2f-%.2f: %.3f\n", interp_scheme, data_res, lowerbound, upperbound, y(1));
+            one_slope = y(1);
         end
         
     end
+    
+    
+    saveas(gca, sprintf("%sslopes_%.2f-%.2f_%s%d.png",result_folder,lowerbound,upperbound,interp_scheme,data_res));
+    saveas(gca, sprintf("%sslopes_%.2f-%.2f_%s%d.fig",result_folder,lowerbound,upperbound,interp_scheme,data_res));
    
 end
