@@ -49,6 +49,7 @@ function [t_arr,f_arr] = mftwdfa(X,Y,s_res,interp_scheme,data_res,q,frac_data,ou
     
     
     
+    
     % ----- FLUCTUATION FUNCTION ----- %
 
     % Setup
@@ -60,27 +61,31 @@ function [t_arr,f_arr] = mftwdfa(X,Y,s_res,interp_scheme,data_res,q,frac_data,ou
     i = 1;
     for s=s_values
 
+        % Print loop info
         lineLength = fprintf("%d / %d\n", i,length(s_values));
 
+        % Create profile of interpolated dataset
         P_fit = wfit(X_interp,P_interp,s);
 
         f = 0;
         Ns = floor(N / s);
 
-        % sum var^(q/2) up, down profile
+        % Sum var^(q/2) up & down profile
         for nu=1:2*Ns
             term = varsum(nu,s,N,P_interp,P_fit);
             f = f + ( term )^(q/2);      
         end
 
-        % normalize sum, raise to 1/q
+        % Normalize sum, raise to 1/q
         f = 1/(2*Ns) * f;
         f = f^(1/q);
 
+        % Append t and f values to arrays
         t_arr(i) = s * t_step;
         f_arr(i) = f;
-        i = i + 1;
         
+        % Increment loop & clear print statement
+        i = i + 1;
         fprintf(repmat('\b',1,lineLength));
 
     end

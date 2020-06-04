@@ -1,15 +1,15 @@
-function h_arr = hurst_exp(q_arr, interp_scheme, data_res, frac_data, result_folder)
+function h_arr = hurst_exp(q_arr, interp_scheme, data_res, frac_data, lowerbound, upperbound, data_folder)
 
     h_arr = zeros(1,length(q_arr));
 
     for i=1:length(q_arr)
         
-        [t_arr,f_arr] = read_data(interp_scheme,data_res,q_arr(i),frac_data, result_folder);
+        [t_arr,f_arr] = read_data(interp_scheme,data_res,q_arr(i),frac_data, data_folder);
 
         % Cut down data to main slope segment
-        small = find(log10(t_arr) > 3.75);
+        small = find(log10(t_arr) > lowerbound);
         starti = small(1);
-        large = find(log10(t_arr) > 4.75);
+        large = find(log10(t_arr) > upperbound);
         endi = large(1);
 
         x = log10(t_arr(starti:endi));

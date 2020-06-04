@@ -14,20 +14,25 @@ scheme = ["makima","spline"];
 res = [1000,5000];
 colors = [[1, 0, 0]; [0.1, 0.9, 0.1]; [0.4, 0.7, 1]; [0.5, 0.1, 0.5]];
 
+lowerbound = 5.0;
+upperbound = 5.5;
+data_folder = "C:\Users\Nash\Dropbox\_NDBK\research\mftwdfa\results\co2\";
+
+% plot lines for singspec
 for i=1:length(scheme)
     for j=1:length(res)
         index = (i-1)*length(res) + j;
-        h_arr = hurst_exp(q_arr, scheme(i), res(j), frac_data);
+        h_arr = hurst_exp(q_arr, scheme(i), res(j), frac_data, lowerbound, upperbound, data_folder);
         [alpha_arr, D_arr] = sing_spectrum(q_arr, h_arr);
         plot(alpha_arr, D_arr, "LineWidth", mkr_size, "Color", colors(index,:));
     end
 end
 
-
+% plot points that the lines connect
 for i=1:length(scheme)
     for j=1:length(res)
         index = (i-1)*length(res) + j;
-        h_arr = hurst_exp(q_arr, scheme(i), res(j), frac_data);
+        h_arr = hurst_exp(q_arr, scheme(i), res(j), frac_data, lowerbound, upperbound, data_folder);
         [alpha_arr, D_arr] = sing_spectrum(q_arr, h_arr);
         scatter(alpha_arr, D_arr, mkr_size*5, colors(index,:), "filled");
     end
@@ -39,6 +44,9 @@ xlabel("\alpha");
 ylabel("f(\alpha)");
 legend("makima, 1000pts", "makima, 5000pts", "spline, 1000pts", "spline, 5000pts");
 
+% adjust these limits as needed!
+xlim([0,1.5]);
+ylim([-1,1.5]);
 
 
 

@@ -12,7 +12,8 @@ for i=1:length(q_arr)
     legend_text{i} = sprintf("q=%d",q_arr(i));    
 end
 
-data_folder = "C:\Users\Nash\Dropbox\_NDBK\research\mftwdfa\results\ALL_DATA\";
+% change folder that data is coming from - USE THIS TO SWITCH BETWEEN DATA SETS!
+data_folder = "C:\Users\Nash\Dropbox\_NDBK\research\mftwdfa\results\temperature\";
 
 
 %% ===== GENERATE Fq FIGURES ===== %%
@@ -36,60 +37,36 @@ close all;
 
 
 
-%% ===== GENERATE SLOPE FIGURES & DATA ===== %%
-
-for i=1:length(q_arr)
-    hold on;
-    [t_arr,f_arr] = read_data(interp_scheme,data_res,q_arr(i),frac_data,data_folder);
-    [tavg_arr,slope_arr] = slopes(interp_scheme,q_arr(i),data_res,frac_data,data_folder);
-    plot(tavg_arr,slope_arr,"LineWidth",1);
-end
-
-% set up and save plot
-lgd = legend(legend_text);
-lgd.Location = 'Southeast';
-title("Slope of log(F_q) vs. time gap over different settings");
-xlabel("t (avg on slope section)");
-ylabel("slope of log(F_q)");
-filename = strcat(data_folder, "slopes_recent.fig");
-saveas(gcf,filename);
-close all;
-
-% Write columns of data to file
-folder = "C:\Users\Nash\Dropbox\_NDBK\research\mftwdfa\results\RAW\";
-file = sprintf("%s-%d_SLOPES.txt",interp_scheme,data_res);
-filename = strcat(folder,file);
-data = [tavg_arr, slope_arr];
-writematrix(data,filename); 
-
-
-
-
 
 %% ===== FIND & PLOT HURST EXPONENTS h(q) ===== %%
 
 % Find H(q) data set from q_arr and the F(q) file corresponding to the current settings
-h_arr = hurst_exp(q_arr, interp_scheme, data_res, frac_data, data_folder);
+
+
+%%% --- LEFT SLOPE SECTION: : hurst exponent & singularity spectrum
+
+
+lowerbound = 4;
+upperbound = 4.5;
+
+h_arr = hurst_exp(q_arr, interp_scheme, data_res, frac_data, lowerbound, upperbound, data_folder);
 scatter(q_arr,h_arr);
 
 % set up and save plot
 title("Hurst exponent vs. statistical moment q");
 xlabel("q");
 ylabel("h(q)");
-filename = strcat(data_folder, "h(q)_recent.fig");
+filename = strcat(data_folder, sprintf("h(q)_recent_%.1f-%.1f.fig", lowerbound, upperbound));
 saveas(gcf,filename);
 close all;
 
 % Write columns of data to file
-folder = "C:\Users\Nash\Dropbox\_NDBK\research\mftwdfa\results\RAW\";
-file = sprintf("%s-%d_H(q).txt",interp_scheme,data_res);
-filename = strcat(folder,file);
+file = sprintf("%s-%d_H(q)_%.1f-%.1f.txt",interp_scheme,data_res,lowerbound,upperbound);
+filename = strcat(data_folder,file);
 data = [q_arr, h_arr];
 writematrix(data,filename); 
 
-
-
-%% ===== FIND AND PLOT SINGULARITY SPECTRUM ===== %%
+% ---
 
 % Find and plot singularity spectrum using q and H(q)
 [alpha_arr, D_arr] = sing_spectrum(q_arr, h_arr);
@@ -99,13 +76,57 @@ scatter(alpha_arr,D_arr);
 title("Singularity spectrum");
 xlabel("\alpha");
 ylabel("f(\alpha)");
-filename = strcat(data_folder, "singspec_recent.fig");
+filename = strcat(data_folder, sprintf("singspec_recent_%.1f-%.1f.fig", lowerbound, upperbound));
 saveas(gcf,filename);
 close all;
 
 % Write columns of data to file
-folder = "C:\Users\Nash\Dropbox\_NDBK\research\mftwdfa\results\RAW\";
-file = sprintf("%s-%d_SPECTRUM.txt",interp_scheme,data_res);
-filename = strcat(folder,file);
+file = sprintf("%s-%d_SPECTRUM_%.1f-%.1f.txt",interp_scheme,data_res, lowerbound, upperbound);
+filename = strcat(data_folder,file);
 data = [alpha_arr, D_arr];
 writematrix(data,filename); 
+
+
+
+%%% --- RIGHT SLOPE SECTION: hurst exponent & singularity spectrum
+
+lowerbound = 5;
+upperbound = 5.5;
+
+h_arr = hurst_exp(q_arr, interp_scheme, data_res, frac_data, lowerbound, upperbound, data_folder);
+scatter(q_arr,h_arr);
+
+% set up and save plot
+title("Hurst exponent vs. statistical moment q");
+xlabel("q");
+ylabel("h(q)");
+filename = strcat(data_folder, sprintf("h(q)_recent_%.1f-%.1f.fig", lowerbound, upperbound));
+saveas(gcf,filename);
+close all;
+
+% Write columns of data to file
+file = sprintf("%s-%d_H(q)_%.1f-%.1f.txt",interp_scheme,data_res,lowerbound,upperbound);
+filename = strcat(data_folder,file);
+data = [q_arr, h_arr];
+writematrix(data,filename); 
+
+% ---
+
+% Find and plot singularity spectrum using q and H(q)
+[alpha_arr, D_arr] = sing_spectrum(q_arr, h_arr);
+scatter(alpha_arr,D_arr);
+
+% set up and save plot
+title("Singularity spectrum");
+xlabel("\alpha");
+ylabel("f(\alpha)");
+filename = strcat(data_folder, sprintf("singspec_recent_%.1f-%.1f.fig", lowerbound, upperbound));
+saveas(gcf,filename);
+close all;
+
+% Write columns of data to file
+file = sprintf("%s-%d_SPECTRUM_%.1f-%.1f.txt",interp_scheme,data_res,lowerbound, upperbound);
+filename = strcat(data_folder,file);
+data = [alpha_arr, D_arr];
+writematrix(data,filename); 
+
