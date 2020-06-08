@@ -1,7 +1,8 @@
 %% ===== DETECT SLOPE CHANGES ===== %%
 
-function hurst = slopes_regression(interp_scheme,q,data_res,frac_data,result_folder,max_e,lowerbound,upperbound)
+function hurst = slopes_regression(data_name,interp_scheme,q,data_res,frac_data,result_folder,max_e,lowerbound,upperbound)
 
+    close all;
     hold on;
 
     % Read in data
@@ -104,22 +105,23 @@ function hurst = slopes_regression(interp_scheme,q,data_res,frac_data,result_fol
         y = cell2mat(w_matrix(e+1,:));
 
         % plotting the slopes
-        nexttile
+        ax = nexttile;
+               
         scatter(x,y,10,"black","filled");
         xlim([lowerbound-0.05, upperbound+0.05]);
         ylim([-0.5,2.5]);
         title(sprintf("%d windows",num_windows));
-        
-        
+
         if e==0 && i==1
             fprintf("w=1 - %s %d , %.2f-%.2f: %.3f\n", interp_scheme, data_res, lowerbound, upperbound, y(1));
             hurst = y(1); % the one-window average slope is the hurst exponent!
+            title(ax, sprintf("%s - %s %d\n (slope of F_2(t), log t = %.2f - %.2f)\n\n1 window",data_name,interp_scheme,data_res,lowerbound,upperbound));
         end
         
     end
     
-    
-    saveas(gca, sprintf("%sslopes_%.2f-%.2f_%s%d.png",result_folder,lowerbound,upperbound,interp_scheme,data_res));
-    saveas(gca, sprintf("%sslopes_%.2f-%.2f_%s%d.fig",result_folder,lowerbound,upperbound,interp_scheme,data_res));
+
+    saveas(gcf, sprintf("%sslopes_%.2f-%.2f_%s%d.png",result_folder,lowerbound,upperbound,interp_scheme,data_res));
+    saveas(gcf, sprintf("%sslopes_%.2f-%.2f_%s%d.fig",result_folder,lowerbound,upperbound,interp_scheme,data_res));
    
 end

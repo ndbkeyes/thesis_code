@@ -1,7 +1,7 @@
 close all;
 warning('off','all')
 
-filename = "C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\data\epica\edc3\edc3-2008_co2_DATA-compositeonly.txt";
+filename = "C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\data\epica\edc3\edc3-2008_co2_DATA-series3-composite.txt";
 data_folder = "C:\Users\Nash\Dropbox\_NDBK\research\mftwdfa\results\co2\";
 cutoff = 1;
 Xvarname = 'Age_yrBP_';

@@ -1,6 +1,5 @@
 function fq_plot_compare(data_folder,data_name)
 
-
     % ===== MAKE Fq COMPARISON PLOT (q=2) ===== %
     hold on;
     q = 2;
@@ -16,8 +15,8 @@ function fq_plot_compare(data_folder,data_name)
     xlabel("log_{10} t");
     ylabel("log_{10}F_2(t)");
     lgd.Location = 'Southeast';
-    
-    saveas(gcf,sprintf("%sfq_compare_plot.fig",data_folder));
-    
-    
+
+    saveas(gcf,sprintf("%sfq_compare_plot_%s.fig",data_folder,data_name));
+
+
 end
