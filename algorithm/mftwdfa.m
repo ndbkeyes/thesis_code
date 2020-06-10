@@ -1,11 +1,22 @@
-function [t_arr,f_arr] = mftwdfa(X,Y,s_res,interp_scheme,data_res,q,frac_data,output_folder)
+function [t_arr,f_arr] = mftwdfa(X,Y,settings,filepath_out)
 
+    % ----- SETTINGS ----- %
+    
+    % unpack settings from array
+    interp_scheme = settings{1};
+    data_res = settings{2};
+    q = settings{3};
+    % hardcoded - number of s values to run with, fraction of data to include
+    s_res = 100;
+    frac_data = 1;
 
     if data_res ~= 0
         N = data_res + 1;
     else
         N = length(X);
     end
+
+    
    
     % ----- INTERPOLATE & PROFILE ----- %
 
@@ -96,17 +107,9 @@ function [t_arr,f_arr] = mftwdfa(X,Y,s_res,interp_scheme,data_res,q,frac_data,ou
     
     % ----- WRITE DATA TO FILE ----- %
 
-    
-    % Create / write to correct file  -  in the general "results" folder,
-    % need to move it to appropriate place after it is written
-    
-    file = sprintf("%s-%d-%d-%.2f_DATA.txt",interp_scheme,data_res,q,frac_data);
-    filename = strcat(output_folder,file);
-    
-
     % Write columns of data to file
     data = [t_arr, f_arr];
-    writematrix(data,filename); 
+    writematrix(data, filepath_out); 
  
     
 

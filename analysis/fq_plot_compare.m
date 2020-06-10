@@ -3,10 +3,10 @@ function fq_plot_compare(data_folder,data_name)
     % ===== MAKE Fq COMPARISON PLOT (q=2) ===== %
     hold on;
     q = 2;
-    frac_data = 1;
-    for interp_scheme=["makima","spline"]
-        for data_res=[1000,5000]
-            [t_arr,f_arr] = read_data(interp_scheme,data_res,q,frac_data,data_folder);
+
+    for interp_scheme=["makima"]%,"spline"]
+        for data_res=[1000]%,5000]
+            [t_arr,f_arr] = read_tripped_data(data_folder,data_name);
             plot(log10(t_arr),log10(f_arr));
         end
     end
