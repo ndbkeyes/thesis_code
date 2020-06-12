@@ -1,19 +1,39 @@
-%% ===== DETECT SLOPE CHANGES ===== %%
-
-function hurst = slopes_regression(data_name,interp_scheme,q,data_res,frac_data,result_folder,max_e,lowerbound,upperbound)
+function hurst = slope_analysis(folder_out,data_name,settings,max_e,bounds)
+% 
+% FUNCTION: slope_analysis(data_name,folder_out,settings,max_e,lowerbound,upperbound)
+%
+% PURPOSE: estimate slope of fluctuation function at decreasing fineness of scale / increasing window sizes
+%
+% INPUT:
+% - data_name: nametag of the series being analyzed
+% - folder_out: folder in which MFTWDFA data is located
+% - settings: array of MFTWDFA settings for which to analyze slopes -- cell array in form {interp_scheme, data_res, q}
+% - max_e: controls maximum # of windows -- 2^max_e windows
+% - bounds: cell array of the lower and upper bounds on the timescale for slope calculation
+%
+% OUTPUT:
+% - hurst: one-window slope of Fq span -- est. Hurst exp if segment has ~constant slope over >= 1 order of mag.
+% also generates grid of plots of slopes over varying numbers of windows
+%
 
     close all;
     hold on;
+    
+    interp_scheme = settings{1};
+    data_res = settings{2};
+    q = settings{3};
+    
+    lowerbound = bounds{1};
+    upperbound = bounds{2};
 
     % Read in data
-    [t_arr,f_arr] = read_data(interp_scheme,data_res,q,frac_data,result_folder);
+    [t_arr,f_arr] = read_data(folder_out,data_name,settings);
     t_arr = log10(t_arr);
     f_arr = log10(f_arr);
     
     % Cut down data to desired slope segment
     small = find(t_arr > lowerbound);
     large = find(t_arr > upperbound);
-    
     if isempty(small)
         starti = 1;
     else
@@ -24,23 +44,17 @@ function hurst = slopes_regression(data_name,interp_scheme,q,data_res,frac_data,
         endi = length(t_arr);
     else
         endi = large(1);
-        
     end
-
-    
     t_arr = t_arr(starti:endi);
     f_arr = f_arr(starti:endi);
         
     range = upperbound - lowerbound;
     
-    % prep for loop
-    layout = tiledlayout(max_e+1,1);
-    %{
-    layout.Units = 'inches';
-    layout.OuterPosition = [0 0 2 8];
-    %}
-    skip = 0;
     
+    
+    % prep for loop
+    tiledlayout(max_e+1,1);
+    skip = 0;
     
     t_matrix = {};
     w_matrix = {};    
@@ -112,16 +126,17 @@ function hurst = slopes_regression(data_name,interp_scheme,q,data_res,frac_data,
         ylim([-0.5,2.5]);
         title(sprintf("%d windows",num_windows));
 
+        % save the one-window average slope value as overall Hurst exponent
         if e==0 && i==1
             fprintf("w=1 - %s %d , %.2f-%.2f: %.3f\n", interp_scheme, data_res, lowerbound, upperbound, y(1));
-            hurst = y(1); % the one-window average slope is the hurst exponent!
+            hurst = y(1);
             title(ax, sprintf("%s - %s %d\n (slope of F_2(t), log t = %.2f - %.2f)\n\n1 window",data_name,interp_scheme,data_res,lowerbound,upperbound));
         end
         
     end
     
-
-    saveas(gcf, sprintf("%sslopes_%.2f-%.2f_%s%d.png",result_folder,lowerbound,upperbound,interp_scheme,data_res));
-    saveas(gcf, sprintf("%sslopes_%.2f-%.2f_%s%d.fig",result_folder,lowerbound,upperbound,interp_scheme,data_res));
+    % save slope figure
+    fig_filename = sprintf("%s%s_Slopes_%s-%d-%d_%.2f-%.2f.fig",folder_out,data_name,interp_scheme,data_res,q,lowerbound,upperbound);
+    saveas(gcf, fig_filename);
    
 end

@@ -1,11 +1,30 @@
-function [X,Y] = load_data(filepath_in, Xvarname, Yvarname, cutoff, scalefactor)
+function [X,Y] = load_data(filepath_in, varnames, cutoff, scalefactor)
+%
+% FUNCTION: load_data(filepath_in, Xvarname, Yvarname, cutoff, scalefactor)
+%
+% PURPOSE: read in climate time series from text file
+%
+% INPUT:
+% - filepath_in: FULL path of data file, both folder and filename
+% - Xvarname: column title in table for independent variable (time)
+% - Yvarname: column title in table for dependent variable (climate quantity)
+% - cutoff: number of rows of data to cut off at the top, if needed --  OPTIONAL, default = 1
+% - scalefactor: scaling multiplier for x-axis (time variable), in case of e.g. kyr units -- OPTIONAL, default = 1
+%
+% OUTPUT:
+% - X: independent-variable (time) series of the climate dataset
+% - Y: dependent-variable (climate quantity) series of the climate dataset
+%
 
-    if nargin == 3
+    if nargin == 2
         cutoff = 1;
         scalefactor = 1;
-    elseif nargin == 4
+    elseif nargin == 3
         scalefactor = 1;
     end
+    
+    Xvarname = varnames{1};
+    Yvarname = varnames{2};
 
     % ===== LOAD IN CLIMATE DATA FROM FILE ===== %
 

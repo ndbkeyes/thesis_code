@@ -1,11 +1,31 @@
-function [t_arr,f_arr] = mftwdfa(X,Y,settings,filepath_out)
+function [t_arr,f_arr] = mftwdfa(X,Y,mftwdfa_settings,filepath_out)
+%
+% FUNCTION: mftwdfa(X,Y,settings,filepath_out)
+%
+% PURPOSE: run MFTWDFA algorithm on given dataset with given settings
+%
+% INPUT:
+% - X: independent-variable (time) series of the climate dataset
+% - Y: dependent-variable (climate quantity) series of the climate dataset
+% - mftwdfa_settings: array of settings for the MFTWDFA run desired -- cell array in form {interp_scheme, data_res, q}
+% - filepath_out: FULL filepath (folder and filename) of textfile to write MFTWDFA results to
+%                 (generate beforehand with mftwdfa_filepath.m)
+% 
+% OUTPUT:
+% - t_arr: array of timescale values generated
+% - f_arr: array of the fluctuation function values calculated
+% also, generates text file at filepath_out containing [t_arr, f_arr]
+% 
+ 
+
+
 
     % ----- SETTINGS ----- %
     
     % unpack settings from array
-    interp_scheme = settings{1};
-    data_res = settings{2};
-    q = settings{3};
+    interp_scheme = mftwdfa_settings{1};
+    data_res = mftwdfa_settings{2};
+    q = mftwdfa_settings{3};
     % hardcoded - number of s values to run with, fraction of data to include
     s_res = 100;
     frac_data = 1;
@@ -28,15 +48,11 @@ function [t_arr,f_arr] = mftwdfa(X,Y,settings,filepath_out)
         N = ceil( N * frac_data );      % decrease N to just go up to fraction of data desired
     end
    
-    X_interp = X_interp(1:N);
-    Y_interp = Y_interp(1:N);
     
     % Make profile (cumulative sum of interpolated data)
     P_interp = prof(Y_interp);
 
 
-
-    
     
     % ----- CALCULATE DERIVED SETTING VALUES ----- %
     
@@ -75,7 +91,7 @@ function [t_arr,f_arr] = mftwdfa(X,Y,settings,filepath_out)
         % Print loop info
         lineLength = fprintf("%d / %d\n", i,length(s_values));
 
-        % Create profile of interpolated dataset
+        % Create weighted fit of interpolated dataset
         P_fit = wfit(X_interp,P_interp,s);
 
         f = 0;
@@ -100,9 +116,6 @@ function [t_arr,f_arr] = mftwdfa(X,Y,settings,filepath_out)
         fprintf(repmat('\b',1,lineLength));
 
     end
-
-
-    
     
     
     % ----- WRITE DATA TO FILE ----- %
@@ -110,7 +123,5 @@ function [t_arr,f_arr] = mftwdfa(X,Y,settings,filepath_out)
     % Write columns of data to file
     data = [t_arr, f_arr];
     writematrix(data, filepath_out); 
- 
-    
 
 end

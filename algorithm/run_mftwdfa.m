@@ -1,19 +1,24 @@
-function run_mftwdfa(filepath_in,folder_out,Xvarname,Yvarname,data_name,cutoff,scalefactor)
-% RUN_MFTWDFA: run full mftwdfa routine
-% - read in climate data from filename using load_data function
-% - run mftwdfa on the four different interpolation settings (makima/spline, 1000/5000 pts)
-% - make plot of fluctuation functions for the four different settings (at q=2)
+function run_mftwdfa(mftwdfa_settings,filepath_in,folder_out,varnames,data_name,cutoff,scalefactor)
+%
+% FUNCTION: run_mftwdfa(filepath_in,folder_out,Xvarname,Yvarname,data_name,cutoff,scalefactor)
+%
+% PURPOSE: read in climate data series, run MFTWDFA on it, write results to file
+%
+% TODO: update inputs s.t. can control from outside what interp_scheme, data_res, q_arr to run with
 %
 % INPUT:
+% - mftwdfa_settings: cell-array of arrays of settings
+%                     form: {[interpscheme_arr], [datares_arr], [q_arr]}
 % - filepath_in: climate data file to read from (complete path + filename)
-% - folder_out: folder in which to output Fq vs. t to (ONLY folder path; function constructs filename)
+% - folder_out: folder in which to output Fq vs. t to (ONLY folder path; function constructs filename!)
 % - Xvarname, Yvarname: column titles to access from data table (needs to be char array, i.e. 'Xvarname' not "Xvarname")
 % - data_name: nametag of the data set you're using; used to create output filename
-% - cutoff: number of rows of data to cut off at the top, if needed
-% - data_folder: destination for text files containing results
+% - cutoff: number of rows of data to cut off at the top, if needed --  OPTIONAL, default = 1
+% - scalefactor: scaling multiplier for x-axis (time variable), in case of e.g. kyr units -- OPTIONAL, default = 1
 %
 % OUTPUT: no return values, just creates files and figures
-% - writes timescale and fluctuation function arrays to text files in data_folder
+% - writes timescale and fluctuation function arrays to text files in folder_out (exact location given by mftwdfa_filepath)
+%
 
 
     if nargin == 5
@@ -22,22 +27,25 @@ function run_mftwdfa(filepath_in,folder_out,Xvarname,Yvarname,data_name,cutoff,s
     elseif nargin == 6
         scalefactor = 1;
     end
+    
 
     % load in data from filein
-    [X,Y] = load_data(filepath_in,Xvarname,Yvarname,cutoff,scalefactor);
+    [X,Y] = load_data(filepath_in,varnames,cutoff,scalefactor);
     
 
     % ===== RUN MFTWDFA ALGORITHM ===== %
     
-    q_arr = [-20,-19,-18,-17,-16,-15,-14,-13,-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]; % range of q values to run with
-    q_arr = [-20,-10,-5,-2,-1,1,2,5,10,20];
-    q_arr = [2];
-    
     fprintf("Running MFTWDFA on %s dataset\n", data_name);
     
-    for interp_scheme=["makima"]%,"spline"]
-        for data_res=[1000]%,5000]
-            for q=q_arr
+    % get sets of parameters out of settings array
+    schemes_arr = mftwdfa_settings{1};
+    res_arr = mftwdfa_settings{2};
+    q_arr = mftwdfa_settings{3};
+    
+    % loop mftwdfa over all the sets of parameters inputted
+    for interp_scheme = schemes_arr
+        for data_res = res_arr
+            for q = q_arr
                 
                 % gather / generate settings
                 settings = {interp_scheme, data_res, q};
@@ -47,7 +55,7 @@ function run_mftwdfa(filepath_in,folder_out,Xvarname,Yvarname,data_name,cutoff,s
                 mftwdfa(X, Y, settings, filepath_out);
                 
                 % print when run is complete
-                fprintf("%s, %d, q=%d run complete\n", interp_scheme, data_res, q);
+                % fprintf("%s, %d, q=%d run complete\n", interp_scheme, data_res, q);
                 
             end
         end

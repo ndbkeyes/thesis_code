@@ -1,5 +1,19 @@
 %%% Weighted fit: use weighted linear regression to make weighted local estimate to the profile (detrending) 
 function yni = wfit(x,Y,s)
+%
+% FUNCTION: yni = wfit(x,Y,s)
+%
+% PURPOSE: find point-by-point weighted linear fit to data profile
+%
+% INPUT:
+% - x: independent-variable (time) values of data series
+% - Y: profile of dependent-variable (climate quantity) values of data series
+% - s: timescale under examination (determines how many points used in weighted fit around each point)
+%
+% OUTPUT:
+% - yni: resulting point-by-point fit to profile from fitting thru s points on either side of each profile point
+%
+
 
     N = length(x);
 

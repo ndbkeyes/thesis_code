@@ -1,3 +1,8 @@
+%
+% TODO: clean this up
+%
+
+
 filename = "C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\data\epica\edc3\edc3-2007_temperature_DATA.txt";
 A = readtable(filename);
 A = A(13:end,:);    % data above 13th bag all have NaN temperature readings
@@ -7,7 +12,7 @@ temp = cell2mat(table2cell(A(:,{'Temperature'})));
 X_temp = flip(age) * -1;
 Y_temp = flip(temp);
 
-data = importdata("C:\Users\Nash\Dropbox\_NDBK\research\mftwdfa\data\epica\edc3\edc3-2008_co2_DATA-compositeonly.txt");
+data = importdata("C:\Users\Nash\Dropbox\_NDBK\research\mftwdfa\data\epica\edc3\edc3-2008_co2_DATA-series3-composite.txt");
 % Get age and co2 data - correct time by flipping all & making age negative
 X_co2 = flip(data.data(:,1)) * -1;
 Y_co2 = flip(data.data(:,2));
