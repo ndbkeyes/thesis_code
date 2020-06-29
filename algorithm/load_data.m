@@ -1,13 +1,12 @@
-function [X,Y] = load_data(filepath_in, varnames, cutoff, scalefactor)
+function [X,Y] = load_data(filepath_in, varnames, read_settings)
 %
-% FUNCTION: load_data(filepath_in, Xvarname, Yvarname, cutoff, scalefactor)
+% FUNCTION: load_data(filepath_in, varnames, cutoff, scalefactor)
 %
 % PURPOSE: read in climate time series from text file
 %
 % INPUT:
 % - filepath_in: FULL path of data file, both folder and filename
-% - Xvarname: column title in table for independent variable (time)
-% - Yvarname: column title in table for dependent variable (climate quantity)
+% - varnames: cell array of column titles in table for independent variable (time) and dependent variable (climate quantity)
 % - cutoff: number of rows of data to cut off at the top, if needed --  OPTIONAL, default = 1
 % - scalefactor: scaling multiplier for x-axis (time variable), in case of e.g. kyr units -- OPTIONAL, default = 1
 %
@@ -15,12 +14,22 @@ function [X,Y] = load_data(filepath_in, varnames, cutoff, scalefactor)
 % - X: independent-variable (time) series of the climate dataset
 % - Y: dependent-variable (climate quantity) series of the climate dataset
 %
-
+    
     if nargin == 2
+        read_settings = {};
+    end
+
+    if length(read_settings) == 0
         cutoff = 1;
         scalefactor = 1;
-    elseif nargin == 3
+    elseif length(read_settings) == 1
+        cutoff = read_settings{1};
         scalefactor = 1;
+    elseif length(read_settings) == 2
+        cutoff = read_settings{1};
+        scalefactor = read_settings{2};
+    else
+        disp("ERROR - weird read_settings");
     end
     
     Xvarname = varnames{1};

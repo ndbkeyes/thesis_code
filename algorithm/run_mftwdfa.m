@@ -1,4 +1,4 @@
-function run_mftwdfa(mftwdfa_settings,filepath_in,folder_out,varnames,data_name,cutoff,scalefactor)
+function run_mftwdfa(mftwdfa_settings,filepath_in,folder_out,varnames,data_name,read_settings)
 %
 % FUNCTION: run_mftwdfa(filepath_in,folder_out,Xvarname,Yvarname,data_name,cutoff,scalefactor)
 %
@@ -11,7 +11,7 @@ function run_mftwdfa(mftwdfa_settings,filepath_in,folder_out,varnames,data_name,
 %                     form: {[interpscheme_arr], [datares_arr], [q_arr]}
 % - filepath_in: climate data file to read from (complete path + filename)
 % - folder_out: folder in which to output Fq vs. t to (ONLY folder path; function constructs filename!)
-% - Xvarname, Yvarname: column titles to access from data table (needs to be char array, i.e. 'Xvarname' not "Xvarname")
+% - varnames: column titles to access from data table (needs to be cell array of char arrays, i.e. 'Xvarname' not "Xvarname")
 % - data_name: nametag of the data set you're using; used to create output filename
 % - cutoff: number of rows of data to cut off at the top, if needed --  OPTIONAL, default = 1
 % - scalefactor: scaling multiplier for x-axis (time variable), in case of e.g. kyr units -- OPTIONAL, default = 1
@@ -20,17 +20,8 @@ function run_mftwdfa(mftwdfa_settings,filepath_in,folder_out,varnames,data_name,
 % - writes timescale and fluctuation function arrays to text files in folder_out (exact location given by mftwdfa_filepath)
 %
 
-
-    if nargin == 5
-        cutoff = 1;
-        scalefactor = 1;
-    elseif nargin == 6
-        scalefactor = 1;
-    end
-    
-
     % load in data from filein
-    [X,Y] = load_data(filepath_in,varnames,cutoff,scalefactor);
+    [X,Y] = load_data(filepath_in,varnames,read_settings);
     
 
     % ===== RUN MFTWDFA ALGORITHM ===== %
@@ -55,7 +46,7 @@ function run_mftwdfa(mftwdfa_settings,filepath_in,folder_out,varnames,data_name,
                 mftwdfa(X, Y, settings, filepath_out);
                 
                 % print when run is complete
-                % fprintf("%s, %d, q=%d run complete\n", interp_scheme, data_res, q);
+                fprintf("%s, %d, q=%d run complete\n", interp_scheme, data_res, q);
                 
             end
         end

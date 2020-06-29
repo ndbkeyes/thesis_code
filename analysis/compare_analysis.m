@@ -1,4 +1,4 @@
-function compare_analysis(quantity,folder_out,data_name,settings)
+function compare_analysis(quantity,folder_out,data_name,settings,bounds)
 %
 % FUNCTION: compare_analysis(quantity,folder_out,data_name,settings)
 %
@@ -11,20 +11,29 @@ function compare_analysis(quantity,folder_out,data_name,settings)
 % - settings: cell array of sets of MFTWDFA settings to compare
 %
 % OUTPUT:
-% no returns - generates plot of desired quantity comparison, saves to folder_out
+% no returns - generates plot of desired quantity comparison
+% (saves .fig to folder_out and .png to results file (hardcoded))
 %
 
+    % validate bounds input
+    if nargin == 4
+        bounds = {};
+        if ~ismember(quantity,["fluctq","fluct2"])
+            disp("improper inputs - this quantity requires bounds");
+        end
+    end
 
+    % prepare for plotting
     close all;
     hold on;
-
     mkr_size = 1;
     colors = [[1, 0, 0]; [0.1, 0.9, 0.1]; [0.4, 0.7, 1]; [0.5, 0.1, 0.5]];
     
+    
+    % unpack MFTWDFA settings array
     scheme_arr = settings{1};
     res_arr = settings{2};
     q_arr = settings{3};
-    
     
     
     % Plot fluctuation functions over different q but same settings
@@ -32,6 +41,8 @@ function compare_analysis(quantity,folder_out,data_name,settings)
         
         scheme = scheme_arr(1);
         res = res_arr(1);
+        
+        q_arr = [-20, -10, -5, -2, 2, 5, 10, 20];
         
         % loop over q values
         for q=q_arr
@@ -46,17 +57,31 @@ function compare_analysis(quantity,folder_out,data_name,settings)
             legend_text{i} = sprintf("q=%d",q_arr(i));    
         end
 
-        title(sprintf("Fluctuation function (q=2) comparison - %s",data_name));
+        title(sprintf("Fluctuation function comparison over settings - %s",data_name));
         xlabel("log(t)");
         ylabel("log(F_2)");
-        legend(legend_text);
+        lgd = legend(legend_text);
+        lgd.Location = "southeast";
+        
+        if ismember(data_name,["co2","ch4","temperature"])
+            xlim([2,6]);
+            ylim([-2,4]);
+        end
         
     end
     
     
+    % build legend for comparison plots
+    lgd_arr = {};
+    for i=1:length(scheme_arr)
+        for j=1:length(res_arr)
+            index = (i-1)*length(res_arr) + j;
+            lgd_arr{index} = sprintf("%s, %d points", scheme_arr(i), res_arr(j));
+        end
+    end
     
 
-    % loop over MFTWDFA settings!
+    % loop over MFTWDFA settings
     for i=1:length(scheme_arr)
         for j=1:length(res_arr)
 
@@ -78,13 +103,19 @@ function compare_analysis(quantity,folder_out,data_name,settings)
                 title(sprintf("Fluctuation function (q=2) comparison - %s",data_name));
                 xlabel("log(t)");
                 ylabel("log(F_2)");
-                legend("makima, 1000 points", "makima, 5000 points", "spline, 1000 points", "spline, 5000 points");
+                
+                
+                lgd = legend(lgd_arr);
+                lgd.Location = "southeast";
+                
+                if ismember(data_name,["co2","ch4","temperature"])
+                    xlim([2,6]);
+                    ylim([-2,4]);
+                end
                 
 
             % Plot Hurst exponent curves
             elseif strcmp(quantity,"hurst")
-
-                bounds = {4.1,4.8};
 
                 h_arr = hurst_exp(folder_out, data_name, settings, bounds);
                 plot(q_arr, h_arr, "-*", "LineWidth", mkr_size, "Color", colors(index,:));
@@ -92,13 +123,11 @@ function compare_analysis(quantity,folder_out,data_name,settings)
                 title(sprintf("Hurst exponent H(q) comparison - %s\n(log(t) = %.2f-%.2f)",data_name,bounds{1},bounds{2}));
                 xlabel("q");
                 ylabel("H(q)");
-                legend("makima, 1000 points", "makima, 5000 points", "spline, 1000 points", "spline, 5000 points");
+                legend(lgd_arr);
 
 
             % Plot singularity spectrum curves
             elseif strcmp(quantity,"singspec")
-
-                bounds = {4.1,4.8};
 
                 h_arr = hurst_exp(folder_out, data_name, settings, bounds);
                 [alpha_arr, D_arr] = sing_spectrum(q_arr, h_arr, folder_out, data_name, settings, bounds);
@@ -107,7 +136,7 @@ function compare_analysis(quantity,folder_out,data_name,settings)
                 title(sprintf("Singularity spectrum comparison - %s\n(log(t) = %.2f-%.2f)",data_name,bounds{1},bounds{2}));
                 xlabel("\alpha");
                 ylabel("f(\alpha)");
-                legend("makima, 1000 points", "makima, 5000 points", "spline, 1000 points", "spline, 5000 points");
+                legend(lgd_arr);
 
             end
 
@@ -115,10 +144,17 @@ function compare_analysis(quantity,folder_out,data_name,settings)
         end
     end
     
-    
-    
-    filename = sprintf("%s%s_%s-compare.fig",folder_out,data_name,quantity);
-    saveas(gcf,filename);
+    % save figures to figs and pngs
+    writeup_figs_folder = "C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\write-up\figures\";
+    if isempty(bounds)
+        fig_filename = sprintf("%s%s_%s-compare.fig",folder_out,data_name,quantity);
+        png_filename = sprintf("%s%s_%s-compare.png",writeup_figs_folder,data_name,quantity);   
+    else
+        fig_filename = sprintf("%s%s_%s-compare_%.2f-%.2f.fig",folder_out,data_name,quantity,bounds{1},bounds{2});
+        png_filename = sprintf("%s%s_%s-compare_%.2f-%.2f.png",writeup_figs_folder,data_name,quantity,bounds{1},bounds{2});   
+    end
+    saveas(gcf,fig_filename);          
+    saveas(gcf,png_filename);
 
 
 
