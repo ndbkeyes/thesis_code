@@ -124,6 +124,9 @@ function compare_analysis(quantity,folder_out,data_name,settings,bounds)
                 xlabel("q");
                 ylabel("H(q)");
                 legend(lgd_arr);
+                xlim([-20.5,20.5]);
+                ylim([0,2.6]);
+                
 
 
             % Plot singularity spectrum curves
@@ -136,7 +139,10 @@ function compare_analysis(quantity,folder_out,data_name,settings,bounds)
                 title(sprintf("Singularity spectrum comparison - %s\n(log(t) = %.2f-%.2f)",data_name,bounds{1},bounds{2}));
                 xlabel("\alpha");
                 ylabel("f(\alpha)");
-                legend(lgd_arr);
+                lgd = legend(lgd_arr);
+                lgd.Location = "Southwest";
+                xlim([-0.25,2.5]);
+                ylim([-0.5,1.25]);
 
             end
 

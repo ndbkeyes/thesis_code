@@ -1,4 +1,4 @@
-function avg_slope = slope_analysis(folder_out,data_name,settings,max_e,bounds)
+function avg_slope = slope_analysis(folder_out,data_name,settings,exp,bounds)
 % 
 % FUNCTION: slope_analysis(data_name,folder_out,settings,max_e,lowerbound,upperbound)
 %
@@ -8,7 +8,9 @@ function avg_slope = slope_analysis(folder_out,data_name,settings,max_e,bounds)
 % - data_name: nametag of the series being analyzed
 % - folder_out: folder in which MFTWDFA data is located
 % - settings: array of MFTWDFA settings for which to analyze slopes -- cell array in form {interp_scheme, data_res, q}
-% - max_e: controls maximum # of windows -- 2^max_e windows
+% - exp: controls maximum # of windows -- 2^exp windows. 
+%        can be a single number, in which case the number of windows goes from 2^0 to 2^exp
+%     or can be a cell array of minimum and maximum exp values
 % - bounds: cell array of the lower and upper bounds on the timescale for slope calculation
 %
 % OUTPUT:
@@ -25,6 +27,20 @@ function avg_slope = slope_analysis(folder_out,data_name,settings,max_e,bounds)
     q_arr = settings{3};
     lowerbound = bounds{1};
     upperbound = bounds{2};
+    
+    
+    % check on the format of exp argument
+    if length(exp) == 1
+        min_exp = 0;
+        max_exp = exp;
+        
+    elseif length(exp) > 1
+        min_exp = exp{1};
+        max_exp = exp{2};
+        
+    end
+    
+    
     
     avg_slope = 0;
     
@@ -64,7 +80,13 @@ function avg_slope = slope_analysis(folder_out,data_name,settings,max_e,bounds)
 
 
                 % prep for loop
-                layout = tiledlayout(max_e+1,1);
+                nplot = 0;
+                if length(exp) == 1
+                    nplot = exp + 1;
+                elseif length(exp) > 1
+                    nplot = exp{2} - exp{1} + 1;
+                end
+                layout = tiledlayout(nplot,1);
     
     
                 skip = 0;
@@ -73,7 +95,7 @@ function avg_slope = slope_analysis(folder_out,data_name,settings,max_e,bounds)
                 w_matrix = {};    
 
                 % loop over window sizes (exponentially)
-                for e=0:1:max_e
+                for e=min_exp:1:max_exp
 
                     num_windows = 2^e;
                     window_size = range / num_windows;
@@ -151,7 +173,7 @@ function avg_slope = slope_analysis(folder_out,data_name,settings,max_e,bounds)
 
                 % save slope figure
                 
-                set(gcf, 'Position',  [0, 0, 300, 1000]);
+                set(gcf, 'Position',  [0, 0, 300, 150*nplot]);
                 
                 fig_filename = sprintf("%s%s_Slopes_%s-%d-%d_%.2f-%.2f.fig",folder_out,data_name,interp_scheme,data_res,q,lowerbound,upperbound);
                 saveas(gcf, fig_filename);

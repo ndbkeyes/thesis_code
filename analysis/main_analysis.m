@@ -16,16 +16,17 @@ function main_analysis(filepath_in,folder_out,varnames,data_name,settings,bounds
     avg_slope_left = slope_analysis(folder_out,data_name,slope_settings,max_logw,bounds_lhs);
     fprintf("avg slope left: %.3f\n", avg_slope_left);
     
-    % if there's rhs bounds, do rhs and "full" analysis as well
+    % if there's rhs bounds, do rhs analysis as well
     if ~isempty(bounds_rhs)
         avg_slope_right = slope_analysis(folder_out,data_name,slope_settings,max_logw,bounds_rhs);
         fprintf("avg slope right: %.3f\n", avg_slope_right);
-        
-        slope_settings = {scheme_arr(1), res_arr(1) ,2};
-        bounds_all = {bounds_lhs{1},bounds_rhs{2}};
-        slope_analysis(folder_out,data_name,slope_settings,max_logw,bounds_all);
-        
     end
+    
+    % also do full 32-win plot for Run 1 (q=2 obvi)
+    slope_settings = {scheme_arr(1), res_arr(2), 2};
+    bounds_all = {bounds_lhs{1},bounds_rhs{2}};
+    logw = {4,4};
+    slope_analysis(folder_out,data_name,slope_settings,logw,bounds_all);
 
     
 
@@ -40,7 +41,7 @@ function main_analysis(filepath_in,folder_out,varnames,data_name,settings,bounds
         end
     end
 
-    opt_model = fluct_dist(filepath_in,folder_out,varnames,data_name)
+    opt_model = fluct_dist(filepath_in,folder_out,varnames,data_name);
 
 end
 

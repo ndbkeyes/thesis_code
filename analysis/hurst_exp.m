@@ -32,6 +32,7 @@ function h_arr = hurst_exp(folder_out, data_name, hurst_settings, bounds, makepl
     h_arr = zeros(1,length(q_arr));
 
     for i=1:length(q_arr)
+       
         
         settings = {interp_scheme, data_res, q_arr(i)};
         [t_arr,f_arr] = read_data(folder_out,data_name,settings);
@@ -39,8 +40,8 @@ function h_arr = hurst_exp(folder_out, data_name, hurst_settings, bounds, makepl
         % Cut down data to main slope segment
         small = find(log10(t_arr) > lowerbound);
         starti = small(1);
-        large = find(log10(t_arr) > upperbound);
-        endi = large(1);
+        large = find(log10(t_arr) < upperbound);
+        endi = large(end);
 
         x = log10(t_arr(starti:endi));
         y = log10(f_arr(starti:endi));

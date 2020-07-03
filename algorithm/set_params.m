@@ -15,7 +15,7 @@ function [filepath_in, varnames, read_settings, data_name, folder_out, bounds_lh
         % ----- SETTINGS FOR OUTPUT ----- %
         data_name = "co2";
         folder_out = strcat("C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\results\",data_name,"\");
-        bounds_lhs = {3.5,4.75};
+        bounds_lhs = {4,4.75};
         bounds_rhs = {5.1,5.6};
         
         
@@ -34,7 +34,7 @@ function [filepath_in, varnames, read_settings, data_name, folder_out, bounds_lh
         % ----- SETTINGS FOR OUTPUT ----- %
         data_name = "ch4";
         folder_out = strcat("C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\results\",data_name,"\");
-        bounds_lhs = {3.75,4.75};
+        bounds_lhs = {4,4.75};
         bounds_rhs = {5.1,5.6};
         
         
@@ -51,7 +51,7 @@ function [filepath_in, varnames, read_settings, data_name, folder_out, bounds_lh
 
         % ----- SETTINGS FOR OUTPUT: MFTWDFA ----- %
         folder_out = strcat("C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\results\",data_name,"\");
-        bounds_lhs = {3.25,4.5};
+        bounds_lhs = {3.5,4.5};
         bounds_rhs = {5.15,5.6};
         
     else
