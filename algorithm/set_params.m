@@ -1,8 +1,11 @@
 function [filepath_in, varnames, read_settings, data_name, folder_out, bounds_lhs, bounds_rhs, data_res] = set_params(data_name)
 
 
+    results_folder = "C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\results\";
 
 
+    
+    
     % Carbon dioxide data settings
     if data_name == "co2"
         
@@ -14,7 +17,7 @@ function [filepath_in, varnames, read_settings, data_name, folder_out, bounds_lh
 
         % ----- SETTINGS FOR OUTPUT ----- %
         data_name = "co2";
-        folder_out = strcat("C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\results\",data_name,"\");
+        folder_out = strcat(results_folder,data_name,"\");
         bounds_lhs = {4,4.75};
         bounds_rhs = {5.1,5.6};
         
@@ -33,7 +36,7 @@ function [filepath_in, varnames, read_settings, data_name, folder_out, bounds_lh
 
         % ----- SETTINGS FOR OUTPUT ----- %
         data_name = "ch4";
-        folder_out = strcat("C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\results\",data_name,"\");
+        folder_out = strcat(results_folder,data_name,"\");
         bounds_lhs = {4,4.75};
         bounds_rhs = {5.1,5.6};
         
@@ -50,7 +53,7 @@ function [filepath_in, varnames, read_settings, data_name, folder_out, bounds_lh
 
 
         % ----- SETTINGS FOR OUTPUT: MFTWDFA ----- %
-        folder_out = strcat("C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\results\",data_name,"\");
+        folder_out = strcat(results_folder,data_name,"\");
         bounds_lhs = {3.5,4.5};
         bounds_rhs = {5.15,5.6};
         
