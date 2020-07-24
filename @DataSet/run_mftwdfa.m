@@ -1,7 +1,7 @@
-function run_mftwdfa(mftwdfa_settings,filepath_in,folder_out,varnames,data_name,read_settings)
+function run_mftwdfa(obj,mftwdfa_settings)
 %
 % FUNCTION: run_mftwdfa(filepath_in,folder_out,Xvarname,Yvarname,data_name,cutoff,scalefactor)
-%
+% ,filepath_in,folder_out,varnames,data_name,read_settings
 % PURPOSE: read in climate data series, run MFTWDFA on it, write results to file
 %
 % TODO: update inputs s.t. can control from outside what interp_scheme, data_res, q_arr to run with
@@ -19,14 +19,9 @@ function run_mftwdfa(mftwdfa_settings,filepath_in,folder_out,varnames,data_name,
 % OUTPUT: no return values, just creates files and figures
 % - writes timescale and fluctuation function arrays to text files in folder_out (exact location given by mftwdfa_filepath)
 %
-
-    % load in data from filein
-    [X,Y] = load_data(filepath_in,varnames,read_settings);
-    
-
     % ===== RUN MFTWDFA ALGORITHM ===== %
     
-    fprintf("Running MFTWDFA on %s dataset\n", data_name);
+    fprintf("Running MFTWDFA on %s dataset\n", obj.data_name);
     
     % get sets of parameters out of settings array
     schemes_arr = mftwdfa_settings{1};
@@ -40,10 +35,10 @@ function run_mftwdfa(mftwdfa_settings,filepath_in,folder_out,varnames,data_name,
                 
                 % gather / generate settings
                 settings = {interp_scheme, data_res, q};
-                filepath_out = mftwdfa_filepath(folder_out,data_name,settings); % constructing the FULL filepath of output file
+                filepath_out = mftwdfa_filepath(obj.folder_out,obj.data_name,settings); % constructing the FULL filepath of output file
                 
                 % RUN ALGORITHM
-                mftwdfa(X, Y, settings, filepath_out);
+                mftwdfa(obj.X, obj.Y, settings, filepath_out);
                 
                 % print when run is complete
                 fprintf("%s, %d, q=%d run complete\n", interp_scheme, data_res, q);

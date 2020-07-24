@@ -66,7 +66,8 @@ function [filepath_in, varnames, cutoff, t_scale, data_name, folder_out, bounds_
     
     
     read_settings = {cutoff, t_scale};
-    data_res = opt_res(filepath_in, varnames, read_settings);
+    data_res=1000;
+%     data_res = opt_res(filepath_in, varnames, read_settings);
 
 
 end
