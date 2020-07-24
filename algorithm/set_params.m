@@ -1,8 +1,7 @@
-function [filepath_in, varnames, read_settings, data_name, folder_out, bounds_lhs, bounds_rhs, data_res] = set_params(data_name)
+function [filepath_in, varnames, cutoff, t_scale, data_name, folder_out, bounds_lhs, bounds_rhs, data_res] = set_params(data_name, results_folder)
 
 
-    results_folder = "C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\results\";
-
+    
 
     
     
@@ -12,7 +11,8 @@ function [filepath_in, varnames, read_settings, data_name, folder_out, bounds_lh
         % ----- SETTINGS FOR INPUT ----- %
         filepath_in = "C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\data\epica\edc3\edc3-2008_co2_DATA-series3-composite.txt";
         varnames = {'Age_yrBP_','CO2_ppmv_'};
-        read_settings = {};
+        cutoff = 1;
+        t_scale = 1;
 
 
         % ----- SETTINGS FOR OUTPUT ----- %
@@ -31,8 +31,8 @@ function [filepath_in, varnames, read_settings, data_name, folder_out, bounds_lh
         % ----- SETTINGS FOR INPUT ----- %
         filepath_in = "C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\data\epica\edc3\edc3-2008_ch4_DATA.txt";
         varnames = {'Var2','Var3'};
-        read_settings = {};
-
+        cutoff = 1;
+        t_scale = 1;
 
         % ----- SETTINGS FOR OUTPUT ----- %
         data_name = "ch4";
@@ -49,7 +49,8 @@ function [filepath_in, varnames, read_settings, data_name, folder_out, bounds_lh
         % ----- SETTINGS FOR INPUT: CLIMATE DATA FILE ----- %
         filepath_in = "C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\data\epica\edc3\edc3-2007_temperature_DATA.txt";
         varnames = {'Age','Temperature'};
-        read_settings = {13,1};
+        cutoff = 13;
+        t_scale = 1;
 
 
         % ----- SETTINGS FOR OUTPUT: MFTWDFA ----- %
@@ -64,7 +65,7 @@ function [filepath_in, varnames, read_settings, data_name, folder_out, bounds_lh
     end
     
     
-    
+    read_settings = {cutoff, t_scale};
     data_res = opt_res(filepath_in, varnames, read_settings);
 
 
