@@ -1,4 +1,4 @@
-function [filepath_in, varnames, cutoff, t_scale, data_name, folder_out, bounds_lhs, bounds_rhs, data_res] = set_params(data_name, results_folder)
+function [filepath_in, varnames, cutoff, t_scale, data_name, folder_out, bounds_lhs, bounds_rhs] = set_params_NK(data_name, results_folder)
 
 
     
@@ -64,12 +64,6 @@ function [filepath_in, varnames, cutoff, t_scale, data_name, folder_out, bounds_
         
     end
     
-    
-    read_settings = {cutoff, t_scale};
-    data_res=1000;
-%     data_res = opt_res(filepath_in, varnames, read_settings);
-
-
 end
     
 

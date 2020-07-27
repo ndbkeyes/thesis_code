@@ -151,16 +151,16 @@ function compare_analysis(quantity,folder_out,data_name,settings,bounds)
     end
     
     % save figures to figs and pngs
-    writeup_figs_folder = "C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\write-up\figures\";
-    if isempty(bounds)
-        fig_filename = sprintf("%s%s_%s-compare.fig",folder_out,data_name,quantity);
-        png_filename = sprintf("%s%s_%s-compare.png",writeup_figs_folder,data_name,quantity);   
-    else
-        fig_filename = sprintf("%s%s_%s-compare_%.2f-%.2f.fig",folder_out,data_name,quantity,bounds{1},bounds{2});
-        png_filename = sprintf("%s%s_%s-compare_%.2f-%.2f.png",writeup_figs_folder,data_name,quantity,bounds{1},bounds{2});   
-    end
-    saveas(gcf,fig_filename);          
-    saveas(gcf,png_filename);
+%     writeup_figs_folder = "C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\write-up\figures\";
+%     if isempty(bounds)
+%         fig_filename = sprintf("%s%s_%s-compare.fig",folder_out,data_name,quantity);
+%         png_filename = sprintf("%s%s_%s-compare.png",writeup_figs_folder,data_name,quantity);   
+%     else
+%         fig_filename = sprintf("%s%s_%s-compare_%.2f-%.2f.fig",folder_out,data_name,quantity,bounds{1},bounds{2});
+%         png_filename = sprintf("%s%s_%s-compare_%.2f-%.2f.png",writeup_figs_folder,data_name,quantity,bounds{1},bounds{2});   
+%     end
+%     saveas(gcf,fig_filename);          
+%     saveas(gcf,png_filename);
 
 
 

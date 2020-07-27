@@ -24,8 +24,9 @@ classdef DataSet
             %   Detailed explanation goes here
             obj.data_name = dn;
             obj.results_folder = rf;
-            [obj.filepath_in, obj.varnames, obj.cutoff, obj.t_scale, obj.data_name, obj.folder_out, obj.bounds_lhs, obj.bounds_rhs, obj.data_res] = set_params(dn, rf); 
-            [obj.X,obj.Y] = obj.load_data();    
+            [obj.filepath_in, obj.varnames, obj.cutoff, obj.t_scale, obj.data_name, obj.folder_out, obj.bounds_lhs, obj.bounds_rhs] = set_params_CL(dn, rf);
+            [obj.X,obj.Y] = obj.load_data();
+            obj.data_res = obj.opt_res();
         end
         function [X,Y] = load_data(obj)
             Xvarname = obj.varnames{1};
@@ -44,6 +45,10 @@ classdef DataSet
             Y = flip(Y);
         end 
         run_mftwdfa(obj,mftwdfa_settings)
+        main_analysis(obj,mftwdfa_settings)
+        
     end
+        
+    
 end
 

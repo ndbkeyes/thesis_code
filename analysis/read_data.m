@@ -14,7 +14,7 @@ function [t_arr,f_arr] = read_data(folder_out,data_name,mftwdfa_settings)
 %
 
     filepath_out = mftwdfa_filepath(folder_out,data_name,mftwdfa_settings);
-    
+    disp(filepath_out)
     try
         timeseries = importdata(filepath_out);
         t_arr = timeseries(:,1);
