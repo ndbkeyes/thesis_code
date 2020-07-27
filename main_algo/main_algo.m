@@ -16,5 +16,5 @@ mftwdfa_settings = {scheme_arr, res_arr, q_arr};
 
 % ----- Run MFTWDFA and analysis ----- %
 
-% obj.run_mftwdfa(mftwdfa_settings);
+obj.run_mftwdfa(mftwdfa_settings);
 obj.main_analysis(mftwdfa_settings);
