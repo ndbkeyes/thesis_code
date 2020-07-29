@@ -1,4 +1,4 @@
-function [t_arr,f_arr] = read_data(folder_out,data_name,mftwdfa_settings)
+function [t_arr,f_arr] = read_data(obj,mftwdfa_settings)
 %
 % FUNCTION: read_data(folder_out,data_name,mftwdfa_settings)
 %
@@ -13,14 +13,14 @@ function [t_arr,f_arr] = read_data(folder_out,data_name,mftwdfa_settings)
 % - [t_arr, f_arr] - arrays of t and Fq, which when plotted in log-log make fluctuation function plot
 %
 
-    filepath_out = mftwdfa_filepath(folder_out,data_name,mftwdfa_settings);
-    
+    filepath_out = mftwdfa_filepath(obj,mftwdfa_settings);
+
     try
         timeseries = importdata(filepath_out);
         t_arr = timeseries(:,1);
         f_arr = timeseries(:,2);
     catch
-        fprintf("MFTWDFA datafiles do not exist for %s - %s, %d.\n",data_name, mftwdfa_settings{1}, mftwdfa_settings{2});
+        fprintf("MFTWDFA datafiles do not exist for %s - %s, %d.\n",obj.data_name, mftwdfa_settings{1}, mftwdfa_settings{2});
     end
     
 end

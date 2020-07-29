@@ -1,17 +1,16 @@
-function avg_slope = slope_analysis(folder_out,data_name,settings,exp,bounds)
+function avg_slope = slope_analysis(obj,settings,exp,bounds)
 % 
-% FUNCTION: slope_analysis(data_name,folder_out,settings,max_e,lowerbound,upperbound)
+% FUNCTION: slope_analysis(obj.data_name,obj.folder_out,settings,max_e,lowerbound,upperbound)
 %
 % PURPOSE: estimate slope of fluctuation function at decreasing fineness of scale / increasing window sizes
 %
 % INPUT:
-% - data_name: nametag of the series being analyzed
-% - folder_out: folder in which MFTWDFA data is located
+% - obj: DataSet object to get data and info from
 % - settings: array of MFTWDFA settings for which to analyze slopes -- cell array in form {interp_scheme, data_res, q}
 % - exp: controls maximum # of windows -- 2^exp windows. 
 %        can be a single number, in which case the number of windows goes from 2^0 to 2^exp
 %     or can be a cell array of minimum and maximum exp values
-% - bounds: cell array of the lower and upper bounds on the timescale for slope calculation
+% - side: whether we're doing LHS, RHS, or FULL sections of slope
 %
 % OUTPUT:
 % - hurst: one-window slope of Fq span -- est. Hurst exp if segment has ~constant slope over >= 1 order of mag.
@@ -25,6 +24,9 @@ function avg_slope = slope_analysis(folder_out,data_name,settings,exp,bounds)
     scheme_arr = settings{1};
     res_arr = settings{2};
     q_arr = settings{3};
+    
+    
+    % set the bounds
     lowerbound = bounds{1};
     upperbound = bounds{2};
     
@@ -54,7 +56,7 @@ function avg_slope = slope_analysis(folder_out,data_name,settings,exp,bounds)
 
                 % Read in data
                 settings = {interp_scheme, data_res, q};
-                [t_arr,f_arr] = read_data(folder_out,data_name,settings);
+                [t_arr,f_arr] = read_data(obj,settings);
                 t_arr = log10(t_arr);
                 f_arr = log10(f_arr);
 
@@ -166,7 +168,7 @@ function avg_slope = slope_analysis(folder_out,data_name,settings,exp,bounds)
                         fprintf("w=1 - %s %d , %.2f-%.2f: %.3f\n", interp_scheme, data_res, lowerbound, upperbound, y(1));
                         hurst = y(1);
                         avg_slope = avg_slope + hurst;
-                        % title(ax, sprintf("%s - %s %d\n (slope of F_2(t), log t = %.2f - %.2f)\n\n1 window",data_name,interp_scheme,data_res,lowerbound,upperbound));
+                        % title(ax, sprintf("%s - %s %d\n (slope of F_2(t), log t = %.2f - %.2f)\n\n1 window",obj.data_name,interp_scheme,data_res,lowerbound,upperbound));
                     end
 
                 end
@@ -175,12 +177,12 @@ function avg_slope = slope_analysis(folder_out,data_name,settings,exp,bounds)
                 
                 set(gcf, 'Position',  [0, 0, 300, 150*nplot]);
                 
-                fig_filename = sprintf("%s%s_Slopes_%s-%d-%d_%.2f-%.2f.fig",folder_out,data_name,interp_scheme,data_res,q,lowerbound,upperbound);
+                fig_filename = sprintf("%s%s_Slopes_%s-%d-%d_%.2f-%.2f.fig",obj.folder_out,obj.data_name,interp_scheme,data_res,q,lowerbound,upperbound);
                 saveas(gcf, fig_filename);
                 
-                writeup_figs_folder = "C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\write-up\figures\";
-                png_filename = sprintf("%s%s_Slopes_%s-%d-%d_%.2f-%.2f.png",writeup_figs_folder,data_name,interp_scheme,data_res,q,lowerbound,upperbound);                
-                saveas(gcf, png_filename);
+%                 writeup_figs_folder = "C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\write-up\figures\";
+%                 png_filename = sprintf("%s%s_Slopes_%s-%d-%d_%.2f-%.2f.png",writeup_figs_folder,obj.data_name,interp_scheme,data_res,q,lowerbound,upperbound);                
+%                 saveas(gcf, png_filename);
         
             end
         end

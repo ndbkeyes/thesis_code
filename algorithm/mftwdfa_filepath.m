@@ -1,4 +1,4 @@
-function filepath_out = mftwdfa_filepath(folder_out,data_name,mftwdfa_settings)
+function filepath_out = mftwdfa_filepath(obj,mftwdfa_settings)
 %
 % FUNCTION: mftwdfa_filepath(folder_out,data_name,mftwdfa_settings)
 %
@@ -17,6 +17,6 @@ function filepath_out = mftwdfa_filepath(folder_out,data_name,mftwdfa_settings)
     data_res = mftwdfa_settings{2};
     q = mftwdfa_settings{3};
 
-    filepath_out = sprintf("%s%s_mftwdfa_%s-%d-%d.txt",folder_out,data_name,interp_scheme,data_res,q);
+    filepath_out = sprintf("%s%s_mftwdfa_%s-%d-%d.txt", obj.folder_out, obj.data_name, interp_scheme,data_res,q);
 
 end

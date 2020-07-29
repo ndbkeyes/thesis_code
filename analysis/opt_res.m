@@ -1,4 +1,4 @@
-function res = opt_res(filepath_in, varnames, read_settings)
+function res = opt_res(obj)
 %
 % FUNCTION: opt_res(filepath_in, varnames, read_settings)
 %
@@ -11,16 +11,14 @@ function res = opt_res(filepath_in, varnames, read_settings)
 % - res: estimate of appropriate resolution for interpolation, in number of points
 %
 
-    [X,~] = load_data(filepath_in, varnames, read_settings);
-
     % find timegaps between consecutive data points
-    timegaps = zeros(length(X)-1,1);
-    for i=1:length(X)-1
-        timegaps(i) = X(i+1)-X(i);
+    timegaps = zeros(length(obj.X)-1,1);
+    for i=1:length(obj.X)-1
+        timegaps(i) = obj.X(i+1)-obj.X(i);
     end
     
     % calculate estimate of good resolution (# of interpolation points)
     % based on dividing the range by the most common timegap, and multiplying by 2 just to be safe
-    res = ceil(range(X) / median(timegaps));
+    res = ceil(range(obj.X) / median(timegaps));
 
 end
