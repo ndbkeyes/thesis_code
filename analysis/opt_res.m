@@ -1,4 +1,4 @@
-function res = opt_res(X)
+function res = opt_res(obj)
 %
 % FUNCTION: opt_res(filepath_in, varnames, read_settings)
 %
@@ -12,8 +12,8 @@ function res = opt_res(X)
 %
 
     % find timegaps between consecutive data points
-    timegaps = zeros(length(X)-1,1);
-    for i=1:length(X)-1
+    timegaps = zeros(length(obj.X)-1,1);
+    for i=1:length(obj.X)-1
         timegaps(i) = obj.X(i+1)-obj.X(i);
     end
     

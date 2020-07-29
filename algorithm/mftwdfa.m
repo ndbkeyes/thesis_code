@@ -1,15 +1,12 @@
-function [t_arr,f_arr] = mftwdfa(X,Y,mftwdfa_settings,filepath_out)
+function [t_arr,f_arr] = mftwdfa(obj, mftwdfa_settings)
 %
-% FUNCTION: mftwdfa(X,Y,settings,filepath_out)
+% FUNCTION: mftwdfa(obj,settings,filepath_out)
 %
 % PURPOSE: run MFTWDFA algorithm on given dataset with given settings
 %
 % INPUT:
-% - X: independent-variable (time) series of the climate dataset
-% - Y: dependent-variable (climate quantity) series of the climate dataset
+% - obj: DataSet object, from which we acces the X and Y values of the raw data
 % - mftwdfa_settings: array of settings for the MFTWDFA run desired -- cell array in form {interp_scheme, data_res, q}
-% - filepath_out: FULL filepath (folder and filename) of textfile to write MFTWDFA results to
-%                 (generate beforehand with mftwdfa_filepath.m)
 % 
 % OUTPUT:
 % - t_arr: array of timescale values generated
@@ -33,7 +30,7 @@ function [t_arr,f_arr] = mftwdfa(X,Y,mftwdfa_settings,filepath_out)
     if data_res ~= 0
         N = data_res + 1;
     else
-        N = length(X);
+        N = length(obj.X);
     end
 
     
@@ -41,7 +38,7 @@ function [t_arr,f_arr] = mftwdfa(X,Y,mftwdfa_settings,filepath_out)
     % ----- INTERPOLATE & PROFILE ----- %
 
     % Create arrays of interpolated data
-    [X_interp,Y_interp] = interpolate(X,Y,data_res,interp_scheme);
+    [X_interp,Y_interp] = interpolate(obj.X,obj.Y, data_res,interp_scheme);
     
     % Trim data after interpolation
     if data_res ~= 0
@@ -120,8 +117,8 @@ function [t_arr,f_arr] = mftwdfa(X,Y,mftwdfa_settings,filepath_out)
     
     % ----- WRITE DATA TO FILE ----- %
 
-    % Write columns of data to file
     data = [t_arr, f_arr];
+    filepath_out = mftwdfa_filepath(obj,mftwdfa_settings); % FULL filepath (folder and filename) of textfile to write MFTWDFA results to
     writematrix(data, filepath_out); 
 
 end

@@ -1,23 +1,21 @@
 classdef DataSet
     
     
-    
     properties
         
-        user_id
-        data_name
-        results_folder
-        filepath_in
-        varnames
-        cutoff
-        t_scale
-        folder_out
-        bounds_lhs
-        bounds_rhs
-        data_res
-        X
-        Y
-        mftwdfa_runs
+        user_id             % nametag of user - for handling different filesystems
+        data_name           % nametag of data set
+        results_folder      % location of overarching "results" folder in which to store all data sets' results
+        filepath_in         % full filepath of raw data text file
+        varnames            % column names for reading in data (needs to be cell array of char arrays, i.e. 'Xvarname' not "Xvarname")
+        cutoff              % index of line to start reading from in data file
+        t_scale             % time scale in data file
+        folder_out          % location of folder within "results" to hold this data set's output
+        bounds_lhs          % log-t bounds for left-hand fluct func slope segment
+        bounds_rhs          % log-t bounds for right-hand fluct func slope segment
+        data_res            % data set's optimal/intrinsic resolution
+        X                   % array of X data
+        Y                   % array of Y data
         
     end
     
@@ -28,28 +26,28 @@ classdef DataSet
         
         %%% DATASET CLASS CONSTRUCTOR
         
-        function obj = DataSet(uid, dn, rf)
+        function obj = DataSet(uid, dn)
             
-            % Assign inputs to corresponding object parameters
+            % Assign user ID and dataset name
             obj.user_id = uid;
             obj.data_name = dn;
-            obj.results_folder = rf;
+
+            % Load in data set's parameters
+            [obj.filepath_in, obj.results_folder, obj.varnames, obj.cutoff, obj.t_scale, obj.folder_out, obj.bounds_lhs, obj.bounds_rhs] = obj.set_params();
             
-            % select data set's parameters based on user ID 
-            % (to account for differing filesystems)
-            if obj.user_id == "NK"
-                [obj.filepath_in, obj.varnames, obj.cutoff, obj.t_scale, obj.data_name, obj.folder_out, obj.bounds_lhs, obj.bounds_rhs] = set_params_NK(dn, rf);
-            elseif obj.user_id == "CL"
-                [obj.filepath_in, obj.varnames, obj.cutoff, obj.t_scale, obj.data_name, obj.folder_out, obj.bounds_lhs, obj.bounds_rhs] = set_params_CL(dn, rf);
-            end
-            
-            % Load in the actual data 
+            % Load in the raw data 
             [obj.X,obj.Y] = obj.load_data();
             
             % Calculate the appropriate data resolution for the dataset
-            obj.data_res = opt_res(obj.X);
+            obj.data_res = opt_res(obj);
             
         end
+        
+        
+        %%% RETRIEVE PARAMETERS FOR DATASET
+        
+        [filepath_in, results_folder, varnames, cutoff, t_scale, folder_out, bounds_lhs, bounds_rhs] = set_params(obj);
+        
         
         
         %%% LOAD IN RAW DATASET

@@ -1,4 +1,4 @@
-function compare_analysis(quantity,folder_out,data_name,settings,bounds)
+function compare_analysis(obj,quantity,settings,bounds)
 %
 % FUNCTION: compare_analysis(quantity,folder_out,data_name,settings)
 %
@@ -7,7 +7,7 @@ function compare_analysis(quantity,folder_out,data_name,settings,bounds)
 % INPUT:
 % - quantity: name of the quantity to compare plots of
 % - folder_out: path of folder in which MFTWDFA data is stored
-% - data_name: name of data being analyzed
+% - obj.data_name: name of data being analyzed
 % - settings: cell array of sets of MFTWDFA settings to compare
 %
 % OUTPUT:
@@ -16,7 +16,7 @@ function compare_analysis(quantity,folder_out,data_name,settings,bounds)
 %
 
     % validate bounds input
-    if nargin == 4
+    if nargin == 3
         bounds = {};
         if ~ismember(quantity,["fluctq","fluct2"])
             disp("improper inputs - this quantity requires bounds");
@@ -34,7 +34,7 @@ function compare_analysis(quantity,folder_out,data_name,settings,bounds)
     scheme_arr = settings{1};
     res_arr = settings{2};
     q_arr = settings{3};
-    
+
     
     % Plot fluctuation functions over different q but same settings
     if strcmp(quantity,"fluctq")
@@ -47,7 +47,7 @@ function compare_analysis(quantity,folder_out,data_name,settings,bounds)
         % loop over q values
         for q=q_arr
             fqplot_settings = {scheme,res,q};
-            [t_arr, f_arr] = read_data(folder_out,data_name,fqplot_settings);
+            [t_arr, f_arr] = read_data(obj,fqplot_settings);
             plot(log10(t_arr), log10(f_arr), "LineWidth", mkr_size);
         end
         
@@ -57,18 +57,19 @@ function compare_analysis(quantity,folder_out,data_name,settings,bounds)
             legend_text{i} = sprintf("q=%d",q_arr(i));    
         end
 
-        title(sprintf("Fluctuation function comparison over settings - %s",data_name));
+        title(sprintf("Fluctuation function comparison over settings - %s",obj.data_name));
         xlabel("log(t)");
         ylabel("log(F_2)");
         lgd = legend(legend_text);
         lgd.Location = "southeast";
         
-        if ismember(data_name,["co2","ch4","temperature"])
+        if ismember(obj.data_name,["co2","ch4","temperature"])
             xlim([2,6]);
             ylim([-2,4]);
         end
         
     end
+    
     
     
     % build legend for comparison plots
@@ -97,10 +98,10 @@ function compare_analysis(quantity,folder_out,data_name,settings,bounds)
             if strcmp(quantity,"fluct2")
 
                 settings{3} = 2;
-                [t_arr, f_arr] = read_data(folder_out,data_name,settings);
+                [t_arr, f_arr] = read_data(obj,settings);
                 plot(log10(t_arr), log10(f_arr), "LineWidth", mkr_size, "Color", colors(index,:));
 
-                title(sprintf("Fluctuation function (q=2) comparison - %s",data_name));
+                title(sprintf("Fluctuation function (q=2) comparison - %s",obj.data_name));
                 xlabel("log(t)");
                 ylabel("log(F_2)");
                 
@@ -108,7 +109,7 @@ function compare_analysis(quantity,folder_out,data_name,settings,bounds)
                 lgd = legend(lgd_arr);
                 lgd.Location = "southeast";
                 
-                if ismember(data_name,["co2","ch4","temperature"])
+                if ismember(obj.data_name,["co2","ch4","temperature"])
                     xlim([2,6]);
                     ylim([-2,4]);
                 end
@@ -117,10 +118,10 @@ function compare_analysis(quantity,folder_out,data_name,settings,bounds)
             % Plot Hurst exponent curves
             elseif strcmp(quantity,"hurst")
 
-                h_arr = hurst_exp(folder_out, data_name, settings, bounds);
+                h_arr = hurst_exp(obj, settings, bounds);
                 plot(q_arr, h_arr, "-*", "LineWidth", mkr_size, "Color", colors(index,:));
 
-                title(sprintf("Hurst exponent H(q) comparison - %s\n(log(t) = %.2f-%.2f)",data_name,bounds{1},bounds{2}));
+                title(sprintf("Hurst exponent H(q) comparison - %s\n(log(t) = %.2f-%.2f)",obj.data_name,bounds{1},bounds{2}));
                 xlabel("q");
                 ylabel("H(q)");
                 legend(lgd_arr);
@@ -132,11 +133,11 @@ function compare_analysis(quantity,folder_out,data_name,settings,bounds)
             % Plot singularity spectrum curves
             elseif strcmp(quantity,"singspec")
 
-                h_arr = hurst_exp(folder_out, data_name, settings, bounds);
-                [alpha_arr, D_arr] = sing_spectrum(q_arr, h_arr, folder_out, data_name, settings, bounds);
+                h_arr = hurst_exp(obj, settings, bounds);
+                [alpha_arr, D_arr] = sing_spectrum(q_arr, h_arr, obj, settings, bounds);
                 plot(alpha_arr, D_arr, "-*", "LineWidth", mkr_size, "Color", colors(index,:));
 
-                title(sprintf("Singularity spectrum comparison - %s\n(log(t) = %.2f-%.2f)",data_name,bounds{1},bounds{2}));
+                title(sprintf("Singularity spectrum comparison - %s\n(log(t) = %.2f-%.2f)",obj.data_name,bounds{1},bounds{2}));
                 xlabel("\alpha");
                 ylabel("f(\alpha)");
                 lgd = legend(lgd_arr);
@@ -150,14 +151,16 @@ function compare_analysis(quantity,folder_out,data_name,settings,bounds)
         end
     end
     
+
+    
     % save figures to figs and pngs
 %     writeup_figs_folder = "C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\write-up\figures\";
 %     if isempty(bounds)
-%         fig_filename = sprintf("%s%s_%s-compare.fig",folder_out,data_name,quantity);
-%         png_filename = sprintf("%s%s_%s-compare.png",writeup_figs_folder,data_name,quantity);   
+%         fig_filename = sprintf("%s%s_%s-compare.fig",obj.folder_out,obj.data_name,quantity);
+%         png_filename = sprintf("%s%s_%s-compare.png",writeup_figs_folder,obj.data_name,quantity);   
 %     else
-%         fig_filename = sprintf("%s%s_%s-compare_%.2f-%.2f.fig",folder_out,data_name,quantity,bounds{1},bounds{2});
-%         png_filename = sprintf("%s%s_%s-compare_%.2f-%.2f.png",writeup_figs_folder,data_name,quantity,bounds{1},bounds{2});   
+%         fig_filename = sprintf("%s%s_%s-compare_%.2f-%.2f.fig",obj.folder_out,obj.data_name,quantity,bounds{1},bounds{2});
+%         png_filename = sprintf("%s%s_%s-compare_%.2f-%.2f.png",writeup_figs_folder,obj.data_name,quantity,bounds{1},bounds{2});   
 %     end
 %     saveas(gcf,fig_filename);          
 %     saveas(gcf,png_filename);

@@ -1,4 +1,4 @@
-function h_arr = hurst_exp(folder_out, data_name, hurst_settings, bounds, makeplot)
+function h_arr = hurst_exp(obj, hurst_settings, bounds, makeplot)
 %
 % FUNCTION: hurst_exp(q_arr, interp_scheme, data_res, frac_data, lowerbound, upperbound, data_folder)
 %
@@ -6,8 +6,8 @@ function h_arr = hurst_exp(folder_out, data_name, hurst_settings, bounds, makepl
 % TODO: redo inputs for everything to be in settings{} form
 %
 % INPUT:
-% - folder_out: folder where the MFTWDFA data file is located
-% - data_name: nametag of data set being analyzed
+% - obj.folder_out: folder where the MFTWDFA data file is located
+% - obj.data_name: nametag of data set being analyzed
 % - hurst_settings: cell array containing interpolation settings and array of q values
 %                   form: {interp_scheme, data_res, q_arr}
 % - lowerbound, upperbound: lower & upper timescale limits for linear fitting to get Hurst exponent
@@ -17,7 +17,7 @@ function h_arr = hurst_exp(folder_out, data_name, hurst_settings, bounds, makepl
 % - h_arr: array of Hurst exponents corresponding to q_arr values
 %
 
-    if nargin == 4
+    if nargin == 3
         makeplot = 0;
     end
 
@@ -35,7 +35,7 @@ function h_arr = hurst_exp(folder_out, data_name, hurst_settings, bounds, makepl
        
         
         settings = {interp_scheme, data_res, q_arr(i)};
-        [t_arr,f_arr] = read_data(folder_out,data_name,settings);
+        [t_arr,f_arr] = read_data(obj,settings);
 
         % Cut down data to main slope segment
         small = find(log10(t_arr) > lowerbound);
@@ -62,7 +62,7 @@ function h_arr = hurst_exp(folder_out, data_name, hurst_settings, bounds, makepl
         title("Hurst exponent vs. statistical moment q");
         xlabel("q");
         ylabel("h(q)");
-        filename = sprintf("%s%s_Hurst_%s-%d_%.2f-%.2f.fig",folder_out,data_name,interp_scheme,data_res,lowerbound,upperbound);
+        filename = sprintf("%s%s_Hurst_%s-%d_%.2f-%.2f.fig",obj.folder_out,obj.data_name,interp_scheme,data_res,lowerbound,upperbound);
         saveas(gcf,filename);
     end
 
