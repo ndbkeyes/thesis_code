@@ -23,9 +23,29 @@ function [xx,yy] = interpolate(X,Y,resolution,scheme)
     range = max_X - min_X;
     step = range / resolution;
 
-    % Remove data values with repeated age - check on whether this is ok
-    [X, index] = unique(X);           % Original x values (age)
-    Y = Y(index);                     % Original y values (CO2)                          
+    
+    % Average data values with same age!
+    X_avg = [];
+    Y_avg = [];
+    j = 1;
+
+    for i=1:length(X)
+
+        % if age value not already encountered:
+        if ~ismember(X(i), X_avg)
+
+            % add it to avg X-array
+            X_avg(j) = X(i);
+
+            % add mean value to avg-Y array - using logical indexing
+            Y_avg(j) = mean(Y(X==X(i)));
+
+            % increment avg-array index
+            j = j + 1;
+
+        end
+    end
+    
 
     % Evenly spaced x values to interpolate to
     if strcmp(scheme,'none')

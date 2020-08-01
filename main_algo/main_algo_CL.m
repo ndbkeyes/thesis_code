@@ -3,7 +3,6 @@ warning('off','all')
 
 user_id = "CL";
 data_name = "spice_temp";
-results_folder = "C:\Users\charl\Desktop\files\summer2020 research\results\";
 obj = DataSet(user_id, data_name);
 
 fprintf("*===== %s main_algo =====*\n",obj.data_name);
