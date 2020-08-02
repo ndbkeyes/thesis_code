@@ -45,24 +45,24 @@ function [xx,yy] = interpolate(X,Y,resolution,scheme)
 
         end
     end
-    
+
 
     % Evenly spaced x values to interpolate to
     if strcmp(scheme,'none')
-        xx = X;
+        xx = X_avg;
     else
         xx = min_X:step:max_X;  
     end
     
     % Interpolate y values
     if strcmp(scheme,'spline')
-        yy = spline(X,Y,xx);
+        yy = spline(X_avg,Y_avg,xx);
     elseif strcmp(scheme,'pchip')
-        yy = pchip(X,Y,xx);
+        yy = pchip(X_avg,Y_avg,xx);
     elseif strcmp(scheme,'makima')
-        yy = makima(X,Y,xx);
+        yy = makima(X_avg,Y_avg,xx);
     elseif strcmp(scheme, 'none')
-        yy = Y;
+        yy = Y_avg;
     else
         disp("ERROR - invalid interpolation scheme");
     end
