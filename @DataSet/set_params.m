@@ -7,11 +7,11 @@ function [filepath_in, results_folder, varnames, cutoff, t_scale, folder_out, bo
         
         results_folder = "C:\Users\charl\Desktop\files\summer2020 research\results\";
 
-        if obj.data_name == "spice_temp"
+        if obj.data_name == "spice_oxygen"
 
                 % ----- SETTINGS FOR INPUT: CLIMATE DATA FILE ----- %
-                filepath_in = "C:\Users\charl\Desktop\files\summer2020 research\SPIceCoreDatahalfcmAverage01-08-2020";
-                varnames = {'Var1','Var2'};
+                filepath_in = "C:\Users\charl\Desktop\files\summer2020 research\spice_age_d18O.csv";
+                varnames = {'Age','d18O_cm_ave'};
                 cutoff = 1;
                 t_scale = 1;
 
@@ -23,6 +23,7 @@ function [filepath_in, results_folder, varnames, cutoff, t_scale, folder_out, bo
                 
                 
         else
+           
             
             disp("ERROR - invalid data name");
                 
