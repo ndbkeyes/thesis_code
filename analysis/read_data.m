@@ -13,6 +13,7 @@ function [t_arr,f_arr] = read_data(obj,mftwdfa_settings)
 % - [t_arr, f_arr] - arrays of t and Fq, which when plotted in log-log make fluctuation function plot
 %
 
+    % disp(mftwdfa_settings);
     filepath_out = mftwdfa_filepath(obj,mftwdfa_settings);
 
     try

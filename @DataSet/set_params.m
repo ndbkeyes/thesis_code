@@ -78,7 +78,7 @@ function [filepath_in, results_folder, varnames, cutoff, t_scale, folder_out, bo
 
 
         % Temperature data settings    
-        elseif data_name == "temperature"
+        elseif obj.data_name == "temperature"
 
             % ----- SETTINGS FOR INPUT: CLIMATE DATA FILE ----- %
             filepath_in = "C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\data\epica\edc3\edc3-2007_temperature_DATA.txt";

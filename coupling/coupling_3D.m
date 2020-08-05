@@ -1,11 +1,11 @@
-function [a1, a2, a3, b12, b13, b21, b23, b31, b32] = coupling_3D(X1, Y1, X2, Y2, X3, Y3, interp_res)
+function [a1, a2, a3, b12, b13, b21, b23, b31, b32] = coupling_3D(obj1, obj2, obj3, interp_res)
 %
 % FUNCTION: coupling(X1, Y1, X2, Y2, X3, Y3, interp_res)
 %
 % PURPOSE: perform 3D coupling analysis on the 3 inputted data sets
 %
 % INPUT: 
-% - Xi, Yi: x,y coordinates of i-th set (i=1,2,3)
+% - obj1, obj2, obj3: DataSet objects holding the data sets we want to analyze coupling for
 % - interp_res: resolution (in number of points) for interpolation
 %
 % OUTPUT:
@@ -15,9 +15,9 @@ function [a1, a2, a3, b12, b13, b21, b23, b31, b32] = coupling_3D(X1, Y1, X2, Y2
 
 
     scheme = "makima";
-    [x1, n1] = interpolate(X1, Y1, interp_res, scheme);
-    [x2, n2] = interpolate(X2, Y2, interp_res, scheme);
-    [x3, n3] = interpolate(X3, Y3, interp_res, scheme);
+    [x1, n1] = interpolate(obj1.X, obj1.Y, interp_res, scheme);
+    [x2, n2] = interpolate(obj2.X, obj2.Y, interp_res, scheme);
+    [x3, n3] = interpolate(obj3.X, obj3.Y, interp_res, scheme);
 
 
     

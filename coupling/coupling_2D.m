@@ -1,12 +1,11 @@
-function [a1, a2, b12, b21] = coupling_2D(X1, Y1, X2, Y2, interp_res)
+function [a1, a2, b12, b21] = coupling_2D(obj1, obj2, interp_res)
 %
 % FUNCTION: coupling(X1, Y1, X2, Y2)
 %
 % PURPOSE: perform coupling analysis on the 2 inputted data sets
 %
 % INPUT: 
-% - X1, Y1: x,y coordinates of 1st set
-% - X2, Y2: x,y coordinates of 2nd set
+% - obj1, obj2: DataSet objects holding the data sets we want to analyze coupling for
 % - interp_res: resolution (in number of points) for interpolation
 %
 % OUTPUT:
@@ -19,8 +18,8 @@ function [a1, a2, b12, b21] = coupling_2D(X1, Y1, X2, Y2, interp_res)
     % ===== INTERPOLATE ===== %
 
     scheme = "makima";
-    [x1, n1] = interpolate(X1, Y1, interp_res, scheme);
-    [x2, n2] = interpolate(X2, Y2, interp_res, scheme);
+    [x1, n1] = interpolate(obj1.X, obj1.Y, interp_res, scheme);
+    [x2, n2] = interpolate(obj1.X, obj2.Y, interp_res, scheme);
 
 
     
