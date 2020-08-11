@@ -180,10 +180,6 @@ function avg_slope = slope_analysis(obj,settings,exp,bounds)
                 fig_filename = sprintf("%s%s_Slopes_%s-%d-%d_%.2f-%.2f.fig",obj.folder_out,obj.data_name,interp_scheme,data_res,q,lowerbound,upperbound);
                 saveas(gcf, fig_filename);
                 
-%                 writeup_figs_folder = "C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\write-up\figures\";
-%                 png_filename = sprintf("%s%s_Slopes_%s-%d-%d_%.2f-%.2f.png",writeup_figs_folder,obj.data_name,interp_scheme,data_res,q,lowerbound,upperbound);                
-%                 saveas(gcf, png_filename);
-        
             end
         end
     end

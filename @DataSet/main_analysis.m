@@ -41,8 +41,6 @@ function main_analysis(obj,mftwdfa_settings)
         end
     end
 
-    %opt_model = fluct_dist(obj.filepath_in,obj.folder_out,obj.varnames,obj.data_name);
-
 end
 
 
