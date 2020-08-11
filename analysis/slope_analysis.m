@@ -15,18 +15,13 @@ function avg_slope = slope_analysis(obj,settings,exp,bounds)
 % OUTPUT:
 % - hurst: one-window slope of Fq span -- est. Hurst exp if segment has ~constant slope over >= 1 order of mag.
 % also generates grid of plots of slopes over varying numbers of windows
-%
-
-    
+%    
     
     
     % unpack settings and bounds from input arrays
     scheme_arr = settings{1};
     res_arr = settings{2};
     q_arr = settings{3};
-    
-    
-    % set the bounds
     lowerbound = bounds{1};
     upperbound = bounds{2};
     
@@ -43,18 +38,17 @@ function avg_slope = slope_analysis(obj,settings,exp,bounds)
     end
     
     
-    
     avg_slope = 0;
     
+    % loop over MFTWDFA settings
     for interp_scheme = scheme_arr
         for data_res = res_arr
             for q = q_arr
                 
-                % figure settings
                 close all;
                 hold on;
 
-                % Read in data
+                % Read in MFTWDFA fluct func data
                 settings = {interp_scheme, data_res, q};
                 [t_arr,f_arr] = read_data(obj,settings);
                 t_arr = log10(t_arr);
@@ -76,19 +70,17 @@ function avg_slope = slope_analysis(obj,settings,exp,bounds)
                 end
                 t_arr = t_arr(starti:endi);
                 f_arr = f_arr(starti:endi);
-
                 range = upperbound - lowerbound;
+                
 
-
-
-                % prep for loop
+                % prepare for loop
                 nplot = 0;
                 if length(exp) == 1
                     nplot = exp + 1;
                 elseif length(exp) > 1
                     nplot = exp{2} - exp{1} + 1;
                 end
-                layout = tiledlayout(nplot,1);
+                tiledlayout(nplot,1);
     
     
                 skip = 0;
@@ -185,7 +177,7 @@ function avg_slope = slope_analysis(obj,settings,exp,bounds)
     end
     
     
-    num = length(scheme_arr) * length(res_arr);
+    num = length(scheme_arr) * length(res_arr); % number of MFTWDFA-setting sets being averaged over
     avg_slope = avg_slope / num;
    
 end

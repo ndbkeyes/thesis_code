@@ -6,7 +6,7 @@ function [a1, a2, b12, b21] = coupling_2D(obj1, obj2, interp_res)
 %
 % INPUT: 
 % - obj1, obj2: DataSet objects holding the data sets we want to analyze coupling for
-% - interp_res: resolution (in number of points) for interpolation
+% - interp_res: resolution (in number of points) for interpolation for both datasets
 %
 % OUTPUT:
 % - a1: stability of 1st set

@@ -1,3 +1,4 @@
+clear all;
 close all;
 warning('off','all')
 
@@ -26,4 +27,4 @@ inc = 0.1;
 mag_range = 0.25;
 
 mftwdfa_settings = {"makima",obj.data_res,2};
-[lb_bounds, ub_bounds, slope_matrix] = slope_map(obj,mftwdfa_settings,inc,mag_range,2);
+slope_map(obj,mftwdfa_settings,inc,mag_range,2);
