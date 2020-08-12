@@ -16,6 +16,7 @@ classdef DataSet
         data_res            % data set's optimal/intrinsic resolution
         X                   % array of X data
         Y                   % array of Y data
+        normed              % whether or not to normalize the fluctuation function by interpolation resolution
         
     end
     
@@ -26,11 +27,16 @@ classdef DataSet
         
         %%% DATASET CLASS CONSTRUCTOR
         
-        function obj = DataSet(uid, dn)
+        function obj = DataSet(uid, dn, nm)
+            
+            if nargin == 2
+                nm = 0;
+            end
             
             % Assign user ID and dataset name
             obj.user_id = uid;
             obj.data_name = dn;
+            obj.normed = nm;
 
             % Load in data set's parameters
             [obj.filepath_in, obj.results_folder, obj.varnames, obj.cutoff, obj.t_scale, obj.folder_out, obj.bounds_lhs, obj.bounds_rhs] = obj.set_params();
@@ -82,7 +88,7 @@ classdef DataSet
         
         %%% RUN ANALYSIS ON MFTWDFA RESULTS FROM DATASET
         
-        main_analysis(obj,mftwdfa_settings)
+        main_analysis(obj,mftwdfa_settings,normed)
         
         
     end

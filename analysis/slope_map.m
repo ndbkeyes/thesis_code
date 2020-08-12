@@ -19,6 +19,7 @@ function [lb_bounds, ub_bounds, slope_matrix] = slope_map(obj, mftwdfa_settings,
 % - slope_matrix: matrix of slope values for corresponding pairs of (lower bound, upper bound)
 %
 
+    close all;
 
     % if only 4 args, don't plot
     if nargin == 4
@@ -66,7 +67,7 @@ function [lb_bounds, ub_bounds, slope_matrix] = slope_map(obj, mftwdfa_settings,
         hold on;
         contourf(lb_bounds,ub_bounds,slope_matrix,100);
        
-        xpltarr = 2:increment:6;
+        xpltarr = 0:increment:6;
         plot(xpltarr, xpltarr);
         plot(xpltarr,xpltarr +1);
         plot(xpltarr,xpltarr +1.5);

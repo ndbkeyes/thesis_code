@@ -16,7 +16,7 @@ function avg_slope = slope_analysis(obj,settings,exp,bounds)
 % - hurst: one-window slope of Fq span -- est. Hurst exp if segment has ~constant slope over >= 1 order of mag.
 % also generates grid of plots of slopes over varying numbers of windows
 %    
-    
+ 
     
     % unpack settings and bounds from input arrays
     scheme_arr = settings{1};
@@ -43,7 +43,7 @@ function avg_slope = slope_analysis(obj,settings,exp,bounds)
     % loop over MFTWDFA settings
     for interp_scheme = scheme_arr
         for data_res = res_arr
-            for q = q_arr
+            for q = q_arr           % actually only for q=2 almost always lol
                 
                 close all;
                 hold on;
@@ -166,9 +166,7 @@ function avg_slope = slope_analysis(obj,settings,exp,bounds)
                 end
 
                 % save slope figure
-                
                 set(gcf, 'Position',  [0, 0, 300, 150*nplot]);
-                
                 fig_filename = sprintf("%s%s_Slopes_%s-%d-%d_%.2f-%.2f.fig",obj.folder_out,obj.data_name,interp_scheme,data_res,q,lowerbound,upperbound);
                 saveas(gcf, fig_filename);
                 
@@ -176,8 +174,9 @@ function avg_slope = slope_analysis(obj,settings,exp,bounds)
         end
     end
     
-    
+    % return overall one-window avg slope over the runs
     num = length(scheme_arr) * length(res_arr); % number of MFTWDFA-setting sets being averaged over
     avg_slope = avg_slope / num;
-   
+    
+    
 end
