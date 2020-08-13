@@ -18,8 +18,8 @@ function [filepath_in, results_folder, varnames, cutoff, t_scale, folder_out, bo
 
                 % ----- SETTINGS FOR OUTPUT: MFTWDFA ----- %
                 folder_out = strcat(results_folder, obj.data_name, "\");
-                bounds_lhs = {1,2.3};
-                bounds_rhs = {2.65,4};
+                bounds_lhs = {1.3,2.3};
+                bounds_rhs = {3.2,4.2};
                 
                 
         else

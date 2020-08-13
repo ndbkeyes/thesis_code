@@ -19,3 +19,11 @@ mftwdfa_settings = {scheme_arr, res_arr, q_arr};
 
 % obj.run_mftwdfa(mftwdfa_settings);
 obj.main_analysis(mftwdfa_settings);
+
+
+% % Slope map
+% inc = 0.1;
+% mag_range = 0.25;
+% 
+% mftwdfa_settings = {"makima",obj.data_res,2};
+% slope_map(obj,mftwdfa_settings,inc,mag_range,2);
