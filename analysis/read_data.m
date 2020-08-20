@@ -23,7 +23,7 @@ function [t_arr,f_arr] = read_data(obj,mftwdfa_settings)
         f_arr = timeseries(:,2);
         
         if obj.normed
-            f_arr = f_arr ./ mftwdfa_settings{2} * obj.data_res;   % normalize by resolution !
+            f_arr = f_arr ./ mftwdfa_settings{2};   % normalize by resolution !
         end
     
     % give error if MFTWDFA hasn't been run yet to make desired files

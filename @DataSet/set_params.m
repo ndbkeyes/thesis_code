@@ -5,12 +5,13 @@ function [filepath_in, results_folder, varnames, cutoff, t_scale, folder_out, bo
     %%% CHARLOTTE SETTINGS
     if obj.user_id == "CL"
         
-        results_folder = "C:\Users\charl\Desktop\files\summer2020 research\results\";
+        results_folder = "C:\Users\charl\Desktop\files\mftwdfa files\results\";
 
+        % Spice oxygen isotope data settings
         if obj.data_name == "spice_oxygen"
 
                 % ----- SETTINGS FOR INPUT: CLIMATE DATA FILE ----- %
-                filepath_in = "C:\Users\charl\Desktop\files\summer2020 research\spice_age_d18O.csv";
+                filepath_in = "C:\Users\charl\Desktop\files\mftwdfa files\data\spice\spice_age_d18O.csv";
                 varnames = {'Age','d18O_cm_ave'};
                 cutoff = 1;
                 t_scale = 1;
@@ -21,6 +22,21 @@ function [filepath_in, results_folder, varnames, cutoff, t_scale, folder_out, bo
                 bounds_lhs = {1.3,2.3};
                 bounds_rhs = {3.2,4.2};
                 
+         
+                
+        % Epica temperature data settings
+        elseif obj.data_name == "epica_temp"
+                 % ----- SETTINGS FOR INPUT: CLIMATE DATA FILE ----- %
+                filepath_in = "C:\Users\charl\Desktop\files\mftwdfa files\data\epica\edc3-2007_temperature_DATA.txt";
+                varnames = {'Age','Temperature'};
+                cutoff = 13;
+                t_scale = 1;
+
+
+                % ----- SETTINGS FOR OUTPUT: MFTWDFA ----- %
+                folder_out = strcat(results_folder, obj.data_name, "\");
+                bounds_lhs = {1.3,2.3};
+                bounds_rhs = {3.2,4.2};
                 
         else
            
