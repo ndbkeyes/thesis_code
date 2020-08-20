@@ -1,4 +1,4 @@
-function avg_slope = avg_slope(obj,settings,slope_bounds)
+function avg_slope = avg_slope(obj,settings,slope_bounds,makeplot)
 %
 % FUNCTION: avg_slope(obj,settings,slope_bounds)
 %
@@ -12,6 +12,10 @@ function avg_slope = avg_slope(obj,settings,slope_bounds)
 % OUTPUT:
 % - avg_slope: the slope of the best-fit line of log F_2(log t) between the two bounds in slope_bounds
 %
+
+    if nargin == 3
+        makeplot = 0;
+    end
 
     % unpack bounds and MFTWDFA settings
     lowerbound = slope_bounds{1};
@@ -50,6 +54,11 @@ function avg_slope = avg_slope(obj,settings,slope_bounds)
     % find slope value
     beta = t_arr_col \ f_arr; % using backslash operator to get slope
     avg_slope = beta(2);
-
+    
+    if makeplot
+        hold on;
+        plot(t_arr, t_arr * beta(2) + beta(1));
+    end
+    
 
 end

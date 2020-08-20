@@ -1,4 +1,4 @@
-function main_analysis(obj,mftwdfa_settings,normed)
+function main_analysis(obj,mftwdfa_settings)
     
     % unpack settings
     scheme_arr = mftwdfa_settings{1};
@@ -6,7 +6,7 @@ function main_analysis(obj,mftwdfa_settings,normed)
     q_arr = mftwdfa_settings{3};
     
     % print abt whether normalized
-    if normed
+    if obj.normed
         disp("Fq NORMALIZED");
     else
         disp("Fq /not/ NORMALIZED");

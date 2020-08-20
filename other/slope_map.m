@@ -68,14 +68,20 @@ function [lb_bounds, ub_bounds, slope_matrix] = slope_map(obj, mftwdfa_settings,
         contourf(lb_bounds,ub_bounds,slope_matrix,100);
        
         xpltarr = 0:increment:6;
-        plot(xpltarr, xpltarr);
-        plot(xpltarr,xpltarr +1);
-        plot(xpltarr,xpltarr +1.5);
+        mr0 = plot(xpltarr, xpltarr);
+        mr1 = plot(xpltarr,xpltarr +1);
         
         yline(max(ub_bounds)-increment*2);
         xline(min(lb_bounds)+increment);
         xlim([min(lb_bounds)-increment,max(lb_bounds)+increment]);
         ylim([min(ub_bounds)-increment,max(ub_bounds)+increment]);
+        
+        legend('Location','SouthEast');  % this sequence shows just the first 2 legends
+        legend([mr0 mr1],{'magnitude range = 0' 'magnitude range = 1'});
+        
+        caxis manual
+        caxis([0 1.7]);
+        colorbar;
         
         hold off
         
@@ -93,7 +99,7 @@ function [lb_bounds, ub_bounds, slope_matrix] = slope_map(obj, mftwdfa_settings,
         axis("xy");
         xlabel("X: lower bound");
         ylabel("Y: upper bound");
-        title(sprintf("Slope & gradient plot for MFTWDFA on %s",obj.data_name));
+        title(sprintf("Slope contour map for MFTWDFA on %s",obj.data_name));
 
         saveas(gcf,sprintf("%s%s_slopemap%d_%s-%d-%d.fig",obj.folder_out,obj.data_name,makeplot,interp_scheme,data_res,q));
         saveas(gcf,sprintf("%s%s_slopemap%d_%s-%d-%d.png",obj.folder_out,obj.data_name,makeplot,interp_scheme,data_res,q));

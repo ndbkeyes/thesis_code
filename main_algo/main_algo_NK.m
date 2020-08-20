@@ -2,29 +2,45 @@ clear all;
 close all;
 warning('off','all')
 
+
+%% make object for each dataset
+
+data_names = ["co2", "ch4", "temperature"];
 user_id = "NK";
-data_name = "temperature";
-normed = 1;
-obj = DataSet(user_id, data_name, normed);
+normed = 0;
 
-fprintf("*===== %s main_algo =====*\n",obj.data_name);
+obj_arr = {};
+mset_arr = {};
 
-
-% ----- Run MFTWDFA and analysis ----- %
-
-scheme_arr = ["makima","spline"];                   % try both schemes
-res_arr = [floor(obj.data_res/2), obj.data_res];    % use the resolution calculated from opt_res inside of set_params, and half of that value
-q_arr = [-20,-15,-10,-5,-2,-1,1,2,5,10,15,20];      % range of q values to run with
-mftwdfa_settings = {scheme_arr, res_arr, q_arr};
-
-% run_mftwdfa(obj,mftwdfa_settings);
-normed = 1;
-main_analysis(obj,mftwdfa_settings,normed);
+for j=1:length(data_names)
+    obj_arr{j} = DataSet(user_id, data_names(j), normed);
+    mset_arr{j} = {"makima", obj_arr{j}.data_res, 2};
+end
 
 
+%% plot slope stdev over different slope segments for each dataset
 
-% ----- Slope gradient plots ----- %
+hold on;
+for j=1:3
+    
+    increment = 0.05;
+    bounds_avg = [];
+    stdevs = [];
+    i = 1;
+    
+    for lb = 2.2 : 0.1 : 5.5
+        ub = lb + 0.6;
+        bounds = {lb, ub};
+        v = slope_stdev(obj_arr{j}, mset_arr{j}, bounds, increment);
+        bounds_avg(i) = (lb + ub)/2;
+        stdevs(i) = v;
+        i = i + 1;
+    end
+    
+    plot(bounds_avg,stdevs);
+    
+end
 
-
+legend("co2 slope stdev", "ch4 slope stdev", "temperature slope stdev");
 
 
