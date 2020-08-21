@@ -23,7 +23,7 @@ warning('off','all')
 % ---- Plot normed spice and epica fluctuation function results on same plot ---- % 
 
 user_id = "CL";
-normed = 1;
+normed = 0;
 obj_spice = DataSet(user_id, "spice_oxygen", normed);
 obj_spice.data_res = 30000;
 obj_epica = DataSet(user_id, "epica_temp", normed);

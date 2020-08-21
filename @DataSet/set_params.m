@@ -2,34 +2,26 @@ function [filepath_in, results_folder, varnames, cutoff, t_scale, folder_out, bo
 
 
     
-    %%% CHARLOTTE SETTINGS
     if obj.user_id == "CL"
-        
-        results_folder = "C:\Users\charl\Desktop\files\mftwdfa files\results\";
+        tag = "C:\Users\charl\Documents\GitHub";
 
+    elseif obj.user_id == "NK"
+        tag = "C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa";
+    end
+        
+    results_folder = strcat(tag,"\mftwdfa_code\data");
+    
+   
+     
+    %%% SPICE SETTINGS
+    
         % Spice oxygen isotope data settings
-        if obj.data_name == "spice_oxygen"
+        if obj.data_name == "spice_temp"
 
                 % ----- SETTINGS FOR INPUT: CLIMATE DATA FILE ----- %
-                filepath_in = "C:\Users\charl\Desktop\files\mftwdfa files\data\spice\spice_age_d18O.csv";
+                filepath_in = strcat(tag,"\mftwdfa_code\data\spice_RAW\spice_age_d18O.csv");
                 varnames = {'Age','d18O_cm_ave'};
                 cutoff = 1;
-                t_scale = 1;
-
-
-                % ----- SETTINGS FOR OUTPUT: MFTWDFA ----- %
-                folder_out = strcat(results_folder, obj.data_name, "\");
-                bounds_lhs = {1.3,2.3};
-                bounds_rhs = {3.2,4.2};
-                
-         
-                
-        % Epica temperature data settings
-        elseif obj.data_name == "epica_temp"
-                 % ----- SETTINGS FOR INPUT: CLIMATE DATA FILE ----- %
-                filepath_in = "C:\Users\charl\Desktop\files\mftwdfa files\data\epica\edc3-2007_temperature_DATA.txt";
-                varnames = {'Age','Temperature'};
-                cutoff = 13;
                 t_scale = 1;
 
 
@@ -44,25 +36,16 @@ function [filepath_in, results_folder, varnames, cutoff, t_scale, folder_out, bo
             disp("ERROR - invalid data name");
                 
         end
-        
-    end
-    
-    
-%%
-    
-    
-    %%% NASH SETTINGS
-    if obj.user_id == "NK"
+
         
         
-        results_folder = "C:\Users\Nash\Dropbox\_NDBK\research\mftwdfa\results\";
-        
+    %%% EPICA SETTINGS
         
          % Carbon dioxide data settings
         if obj.data_name == "co2"
 
             % ----- SETTINGS FOR INPUT ----- %
-            filepath_in = "C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\data\epica\edc3\edc3-2008_co2_DATA-series3-composite.txt";
+            filepath_in = strcat(tag,"\mftwdfa_code\data\epica_RAW\edc3-2008_co2_DATA-series3-composite.txt");
             varnames = {'Age_yrBP_','CO2_ppmv_'};
             cutoff = 1;
             t_scale = 1;
@@ -76,12 +59,11 @@ function [filepath_in, results_folder, varnames, cutoff, t_scale, folder_out, bo
 
 
 
-
         % Methane data settings    
         elseif obj.data_name == "ch4"
 
             % ----- SETTINGS FOR INPUT ----- %
-            filepath_in = "C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\data\epica\edc3\edc3-2008_ch4_DATA.txt";
+            filepath_in = strcat(tag,"\mftwdfa_code\data\epica_RAW\edc3-2008_ch4_DATA.txt");
             varnames = {'Var2','Var3'};
             cutoff = 1;
             t_scale = 1;
@@ -93,12 +75,11 @@ function [filepath_in, results_folder, varnames, cutoff, t_scale, folder_out, bo
 
 
 
-
         % Temperature data settings    
         elseif obj.data_name == "temperature"
 
             % ----- SETTINGS FOR INPUT: CLIMATE DATA FILE ----- %
-            filepath_in = "C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\data\epica\edc3\edc3-2007_temperature_DATA.txt";
+            filepath_in = strcat(tag,"\mftwdfa_code\data\epica_RAW\dc3-2007_temperature_DATA.txt");
             varnames = {'Age','Temperature'};
             cutoff = 13;
             t_scale = 1;
@@ -114,7 +95,5 @@ function [filepath_in, results_folder, varnames, cutoff, t_scale, folder_out, bo
             disp("ERROR - invalid data name");
 
         end
-        
-    end
 
 end
