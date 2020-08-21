@@ -59,6 +59,6 @@ function avg_slope = avg_slope(obj,settings,slope_bounds,makeplot)
         hold on;
         plot(t_arr, t_arr * beta(2) + beta(1));
     end
-    
+   
 
 end
