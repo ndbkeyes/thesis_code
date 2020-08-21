@@ -27,11 +27,8 @@ function main_analysis(obj,mftwdfa_settings)
     
     
     % ----- fluct2 compare plots ----- %
-    obj.normed = 0;
     fluct2_compare(obj,mftwdfa_settings);
-    obj.normed = 1;
-    fluct2_compare(obj,mftwdfa_settings);
-    
+ 
     
     
     % ----- slope map ----- %
@@ -41,15 +38,6 @@ function main_analysis(obj,mftwdfa_settings)
     obj.normed = 1;
     slope_map(obj,mftwdfa_settings,inc,mag_range,2);
     
-    
-    
-    
-%     % also do full 32-win plot for Run 1 (q=2 obvi)
-%     slope_settings = {scheme_arr(1), res_arr(1), 2};
-%     bounds_all = {obj.bounds_lhs{1},obj.bounds_rhs{2}};
-%     logw = {4,4};
-%     slope_analysis(obj.folder_out,obj.data_name,slope_settings,logw,bounds_all);
-
     
     % ----- Compare quantities over different settings ----- %
 %     for lbl = ["fluctq","fluct2"]

@@ -29,6 +29,7 @@ function [t_arr,f_arr] = read_data(obj,mftwdfa_settings)
     % give error if MFTWDFA hasn't been run yet to make desired files
     catch
         fprintf("MFTWDFA datafiles do not exist for %s - %s, %d.\n",obj.data_name, mftwdfa_settings{1}, mftwdfa_settings{2});
+        disp(filepath_out);
     end
     
 end

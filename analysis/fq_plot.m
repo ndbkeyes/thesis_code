@@ -16,7 +16,7 @@ function [t_arr,f_arr] = fq_plot(obj,mftwdfa_settings)
     [t_arr, f_arr] = read_data(obj,mftwdfa_settings);    
     
     plot(log10(t_arr),log10(f_arr));
-    filename = sprintf("%s%s_FluctFunc_%s-%d-%d.fig",obj.folder_out,obj.data_name,mftwdfa_settings{1},mftwdfa_settings{2},mftwdfa_settings{3});
+    filename = sprintf("%s%s_FluctFunc_%s-%d-%d.fig",obj.figs_folder_out,obj.data_name,mftwdfa_settings{1},mftwdfa_settings{2},mftwdfa_settings{3});
     saveas(gcf,filename);
     
     

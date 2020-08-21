@@ -167,7 +167,7 @@ function avg_slope = slope_analysis(obj,settings,exp,bounds)
 
                 % save slope figure
                 set(gcf, 'Position',  [0, 0, 300, 150*nplot]);
-                fig_filename = sprintf("%s%s_Slopes_%s-%d-%d_%.2f-%.2f.fig",obj.folder_out,obj.data_name,interp_scheme,data_res,q,lowerbound,upperbound);
+                fig_filename = sprintf("%s%s_Slopes_%s-%d-%d_%.2f-%.2f.fig",obj.figs_folder_out,obj.data_name,interp_scheme,data_res,q,lowerbound,upperbound);
                 saveas(gcf, fig_filename);
                 
             end

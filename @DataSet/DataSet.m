@@ -5,7 +5,8 @@ classdef DataSet
         
         user_id             % nametag of user - for handling different filesystems
         data_name           % nametag of data set
-        results_folder      % location of overarching "results" folder in which to store all data sets' results
+        data_folder_out     % location of overarching "data" folder in which to store all data sets' results
+        figs_folder_out     % location of overarching "figures" folder in which to store all resulting figures
         filepath_in         % full filepath of raw data text file
         varnames            % column names for reading in data (needs to be cell array of char arrays, i.e. 'Xvarname' not "Xvarname")
         cutoff              % index of line to start reading from in data file
@@ -25,6 +26,7 @@ classdef DataSet
     methods
         
         
+        
         %%% DATASET CLASS CONSTRUCTOR
         
         function obj = DataSet(uid, dn, nm)
@@ -39,7 +41,7 @@ classdef DataSet
             obj.normed = nm;
 
             % Load in data set's parameters
-            [obj.filepath_in, obj.results_folder, obj.varnames, obj.cutoff, obj.t_scale, obj.folder_out, obj.bounds_lhs, obj.bounds_rhs] = obj.set_params();
+            [obj.filepath_in, obj.data_folder_out, obj.figs_folder_out, obj.varnames, obj.cutoff, obj.t_scale, obj.bounds_lhs, obj.bounds_rhs] = obj.set_params();
             
             % Load in the raw data 
             [obj.X,obj.Y] = obj.load_data();
@@ -48,11 +50,6 @@ classdef DataSet
             obj.data_res = opt_res(obj);
             
         end
-        
-        
-        %%% RETRIEVE PARAMETERS FOR DATASET
-        
-        [filepath_in, results_folder, varnames, cutoff, t_scale, folder_out, bounds_lhs, bounds_rhs] = set_params(obj);
         
         
         
@@ -77,19 +74,7 @@ classdef DataSet
             Y = flip(Y);
             
         end 
-        
-        
-        
-        %%% RUN MFTWDFA ON DATASET
-        
-        run_mftwdfa(obj,mftwdfa_settings)
-        
-        
-        
-        %%% RUN ANALYSIS ON MFTWDFA RESULTS FROM DATASET
-        
-        main_analysis(obj,mftwdfa_settings,normed)
-        
+               
         
     end
     

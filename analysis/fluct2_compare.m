@@ -9,7 +9,7 @@ function fluct2_compare(obj,settings)
     q_arr = settings{3};
     
     if obj.normed == 0
-        normed_tag = "_NOT-normed";
+        normed_tag = "";
     else
         normed_tag = "_normed";
     end
@@ -33,7 +33,7 @@ function fluct2_compare(obj,settings)
         ylabel("log_{10} F_2(t)_{not normed}");
     end
     
-    fig_filename = sprintf("%s%s_fluct2-compare%s.fig",obj.folder_out,obj.data_name,normed_tag);
+    fig_filename = sprintf("%s%s_fluct2-compare%s.fig",obj.figs_folder_out,obj.data_name,normed_tag);
     saveas(gcf, fig_filename);
     
 end
