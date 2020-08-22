@@ -152,9 +152,9 @@ function compare_analysis(obj,quantity,settings,bounds)
     end
     
     if isempty(bounds)
-        fig_filename = sprintf("%s%s_%s-compare.fig",obj.figs_folder_out,obj.data_name,quantity);
+        fig_filename = sprintf("%s_%s-compare.fig",obj.figs_compare,quantity);
     else
-        fig_filename = sprintf("%s%s_%s-compare_%.2f-%.2f.fig",obj.figs_folder_out,obj.data_name,quantity,bounds{1},bounds{2});
+        fig_filename = sprintf("%s_%s-compare_%.2f-%.2f.fig",obj.figs_compare,quantity,bounds{1},bounds{2});
     end
     saveas(gcf,fig_filename);          
 end

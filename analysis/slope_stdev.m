@@ -27,7 +27,7 @@ function slope_std = slope_stdev(obj, mftwdfa_settings, bounds, mag_range, incre
     bounds_A = [];
     stdevs_A = [];
     i = 1;
-    for lb_A = bounds{1} : increment_A : bounds{2}
+    for lb_A = bounds{1} - mag_range/2 : increment_A : bounds{2} - mag_range/2
 
         ub_A = lb_A + mag_range;
         bounds = {lb_A, ub_A};
@@ -58,12 +58,9 @@ function slope_std = slope_stdev(obj, mftwdfa_settings, bounds, mag_range, incre
     end
     
     plot(bounds_A,stdevs_A);
-    title(sprintf("Standard deviation within slope segments\nfor MFTWDFA fluctuation func on %s data",obj.data_name));
     xlabel("center of slope segment bounds");
     ylabel("standard deviation of slope sub-segments");
     
-    txt = {sprintf('size of (A) slope segments: %.2f',mag_range),sprintf('size of (B) sub-segments: %.2f',increment_B)};
-    text(4.25,0.6,txt)
-
+    
 end
 

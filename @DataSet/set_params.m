@@ -1,16 +1,18 @@
-function [filepath_in, data_folder_out, figs_folder_out, varnames, cutoff, t_scale, bounds_lhs, bounds_rhs] = set_params(obj)
+function [filepath_in, data_subfolder, figs_subfolder, figs_compare, varnames, cutoff, t_scale, bounds_lhs, bounds_rhs] = set_params(obj)
 
 
     
     if obj.user_id == "CL"
-        tag = "C:\Users\charl\Documents\GitHub";
+        tag = "C:\Users\charl\Documents\GitHub\";
 
     elseif obj.user_id == "NK"
-        tag = "C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa";
+        tag = "C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\";
     end
-        
-    data_folder_out = strcat(tag,"\mftwdfa_code\data\",obj.data_name,"\");
-    figs_folder_out = strcat(tag,"\mftwdfa_code\figures\",obj.data_name,"\");
+    
+    base_folder = strcat(tag,"mftwdfa_code\");
+    data_subfolder = strcat(base_folder,"data\",obj.data_name,"\");
+    figs_subfolder = strcat(base_folder,"figures\",obj.data_name,"\");
+    figs_compare = strcat(base_folder,"figures\COMPARE\");
     
    
      
