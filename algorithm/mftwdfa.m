@@ -70,7 +70,7 @@ function [t_arr,f_arr] = mftwdfa(obj, mftwdfa_settings)
 
     % make array of s values to use
     s_values = unique(floor(logspace(log10(smin),log10(smax),s_res)));
-    
+    % s is number of points at given resolution that correspond to the timescale of interest
     
     
     

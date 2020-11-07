@@ -18,7 +18,9 @@ function res = opt_res(obj)
     end
     
     % calculate estimate of good resolution (# of interpolation points)
-    % based on dividing the range by the most common timegap, and multiplying by 2 just to be safe
+    % based on dividing the range by the most common timegap, and
+    % multiplying by 2 just to be safe
+    
     res = ceil(range(obj.X) / median(timegaps));
 
 end

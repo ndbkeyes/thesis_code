@@ -6,7 +6,8 @@ function [filepath_in, data_subfolder, figs_subfolder, figs_compare, varnames, c
         tag = "C:\Users\charl\Documents\GitHub\";
 
     elseif obj.user_id == "NK"
-        tag = "C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\";
+        tag_MYLAPTOP = "C:\Users\Nash\Dropbox\_NDBK\Research\mftwdfa\";
+        tag = "C:\Users\ndk9\Dropbox\_NDBK\Research\mftwdfa\";
     end
     
     base_folder = strcat(tag,"mftwdfa_code\");
@@ -54,7 +55,7 @@ function [filepath_in, data_subfolder, figs_subfolder, figs_compare, varnames, c
 
     % Methane data settings    
     elseif obj.data_name == "epica-ch4"
-
+        
         % ----- SETTINGS FOR INPUT ----- %
         filepath_in = strcat(tag,"\mftwdfa_code\data\epica_RAW\edc3-2008_ch4_DATA.txt");
         varnames = {'Var2','Var3'};

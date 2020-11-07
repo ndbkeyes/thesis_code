@@ -9,13 +9,17 @@ user_id = "NK";
 normed = 0;
 obj_arr = {};
 mset_arr = {};
+hold on;
 for j=1:length(data_names)
     obj_arr{j} = DataSet(user_id, data_names(j), normed);
-    mset_arr{j} = {"makima", 10000, 2};
+    mset_arr{j} = {"makima", obj_arr{j}.data_res, 2};
+    slope_curvature(obj_arr{j}, mset_arr{j});
 end
+saveas(gcf, sprintf("%sepica-compare_slope-curvature.fig",obj_arr{1}.figs_compare));
 
+print("made objects!");
 
-
+% mftwdfa(obj_arr{1},mset_arr{1});
 
 %% plot slope subsegment standard deviation
 bounds = {3,6};

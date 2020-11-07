@@ -34,7 +34,6 @@ classdef DataSet
     methods
         
         
-        
         %%% DATASET CLASS CONSTRUCTOR
         
         function obj = DataSet(uid, dn, nm)
@@ -49,40 +48,16 @@ classdef DataSet
             obj.normed = nm;
 
             % Load in data set's parameters
-            [obj.filepath_in, obj.data_subfolder, obj.figs_subfolder, obj.figs_compare, obj.varnames, obj.cutoff, obj.t_scale, obj.bounds_lhs, obj.bounds_rhs] = obj.set_params();
+            [obj.filepath_in, obj.data_subfolder, obj.figs_subfolder, obj.figs_compare, obj.varnames, obj.cutoff, obj.t_scale, obj.bounds_lhs, obj.bounds_rhs] = set_params(obj);
             
             % Load in the raw data 
-            [obj.X,obj.Y] = obj.load_data();
-            
+            [obj.X,obj.Y] = load_data(obj);
             % Calculate the appropriate data resolution for the dataset
             obj.data_res = opt_res(obj);
             
         end
         
-        
-        
-        %%% LOAD IN RAW DATASET
-        
-        function [X,Y] = load_data(obj)
-            
-            % Unpack X and Y variable column names
-            Xvarname = obj.varnames{1};
-            Yvarname = obj.varnames{2};
 
-            % Read in data from file as table, trim any top part of the data needed
-            A = readtable(obj.filepath_in);
-            A = A(obj.cutoff:end,:);
-            
-            % create age and temp arrays from table & plot
-            X = cell2mat(table2cell(A(:,{Xvarname})));
-            Y = cell2mat(table2cell(A(:,{Yvarname})));
-            
-            % create X and Y arrays in order of age and with correct sign (time goes negative)
-            X = flip(X) * -1 * obj.t_scale;
-            Y = flip(Y);
-            
-        end
-               
         
     end
     

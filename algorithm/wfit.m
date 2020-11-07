@@ -4,11 +4,14 @@ function yni = wfit(x,Y,s)
 % FUNCTION: yni = wfit(x,Y,s)
 %
 % PURPOSE: find point-by-point weighted linear fit to data profile
+% N.B.: assumes evenly-spaced input data x and Y !!!
 %
 % INPUT:
 % - x: independent-variable (time) values of data series
 % - Y: profile of dependent-variable (climate quantity) values of data series
 % - s: timescale under examination (determines how many points used in weighted fit around each point)
+%      (s is really the number of points around the given center-point used
+%      in the weighted fit)
 %
 % OUTPUT:
 % - yni: resulting point-by-point fit to profile from fitting thru s points on either side of each profile point
@@ -64,5 +67,9 @@ function yni = wfit(x,Y,s)
         yni(i) = y;
         
     end   
+    
+    hold on;
+    scatter(x,Y);
+    plot(x,yni);
         
 end
