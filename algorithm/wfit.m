@@ -68,8 +68,8 @@ function yni = wfit(x,Y,s)
         
     end   
     
-    hold on;
-    scatter(x,Y);
-    plot(x,yni);
+%     hold on;
+%     scatter(x,Y);
+%     plot(x,yni);
         
 end

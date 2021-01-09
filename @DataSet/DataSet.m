@@ -22,6 +22,7 @@ classdef DataSet
         bounds_rhs          % log-t bounds for right-hand fluct func slope segment
         
         data_res            % data set's optimal/intrinsic resolution
+        time_gap            % length of time between points interpolated to data_res
         
         X                   % array of X data
         Y                   % array of Y data
@@ -36,24 +37,40 @@ classdef DataSet
         
         %%% DATASET CLASS CONSTRUCTOR
         
-        function obj = DataSet(uid, dn, nm)
+        function obj = DataSet(mode, arg1, arg2, arg3)
             
-            if nargin == 2
-                nm = 0;
-            end
-            
-            % Assign user ID and dataset name
-            obj.user_id = uid;
-            obj.data_name = dn;
-            obj.normed = nm;
+            if mode == "vbl"
+                
+                obj.X = arg1;
+                obj.Y = arg2;
+                obj.data_res = floor(length(arg1));
+                obj.data_name = arg3;
+                
+                tag = "C:\Users\ndbke\Dropbox\_NDBK\Research\mftwdfa\";
 
-            % Load in data set's parameters
-            [obj.filepath_in, obj.data_subfolder, obj.figs_subfolder, obj.figs_compare, obj.varnames, obj.cutoff, obj.t_scale, obj.bounds_lhs, obj.bounds_rhs] = set_params(obj);
+                base_folder = strcat(tag,"mftwdfa_code\");
+                obj.data_subfolder = strcat(base_folder,"data\",obj.data_name,"\");
+                obj.figs_subfolder = strcat(base_folder,"figures\",obj.data_name,"\");
+                obj.figs_compare = strcat(base_folder,"figures\COMPARE\");
+
+                
+            elseif mode == "data"
             
-            % Load in the raw data 
-            [obj.X,obj.Y] = load_data(obj);
-            % Calculate the appropriate data resolution for the dataset
-            obj.data_res = opt_res(obj);
+                % Assign user ID and dataset name
+                obj.user_id = arg1;
+                obj.data_name = arg2;
+                obj.normed = 0;
+
+                % Load in data set's parameters
+                [obj.filepath_in, obj.data_subfolder, obj.figs_subfolder, obj.figs_compare, obj.varnames, obj.cutoff, obj.t_scale, obj.bounds_lhs, obj.bounds_rhs] = set_params(obj);
+
+                % Load in the raw data 
+                [obj.X,obj.Y] = load_data(obj);
+                % Calculate the appropriate data resolution for the dataset
+                obj.data_res = opt_res(obj);
+                obj.time_gap = range(obj.X)/obj.data_res;
+            
+            end 
             
         end
         

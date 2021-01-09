@@ -1,4 +1,4 @@
-function slope_std = slope_stdev(obj, mftwdfa_settings, bounds, mag_range, increments)
+function [tavg_arr, std_arr] = slope_stdev(obj, mftwdfa_settings, increments, bounds)
 %
 % FUNCTION: slope_stdev(obj, mftwdfa_settings, bounds, increment)
 %
@@ -17,50 +17,25 @@ function slope_std = slope_stdev(obj, mftwdfa_settings, bounds, mag_range, incre
 % - slope_std: standard deviation of the sub-segment slopes
 %
 
+    bounds_slope = {bounds{1} - increments{2}/2 , bounds{2} + increments{2}/2};
 
-    increment_A = increments{1};
-    increment_B = increments{2};
-
+    [tscale_arr, slope_arr] = slope_smoothed(obj,mftwdfa_settings,increments,bounds_slope);
     
+    section_size = ceil(increments{2} / increments{1});
+    disp(section_size);
     
-    % LOOP OVER (A) larger slope segments
-    bounds_A = [];
-    stdevs_A = [];
     i = 1;
-    for lb_A = bounds{1} - mag_range/2 : increment_A : bounds{2} - mag_range/2
-
-        ub_A = lb_A + mag_range;
-        bounds = {lb_A, ub_A};
-        
-        % (B) sub-sections of the (A) larger segments
-        slopes_B = [];
-        j = 1;
-        for lb_B = bounds{1} : increment_B : bounds{2}
-
-            ub_B = lb_B + increment_B;
-
-            % get slope of (B) sub-section
-            s = avg_slope(obj,mftwdfa_settings,{lb_B,ub_B});
-            slopes_B(j) = s;
-            j = j + 1;
-
-        end
-
-        % find stdev of the distribution of (B) sub-section slopes
-        % gives 1 stdev value for the (A) larger segment as a whole!
-        slope_std = std(slopes_B); 
-        
-        bounds_A(i) = (lb_A + ub_A)/2;
-        stdevs_A(i) = slope_std;
+    tavg_arr = [];
+    stdev_arr = [];
+    
+    while i + section_size < length(slope_arr)
+        indices = i : i+section_size;
+        tavg_arr(i) = mean(tscale_arr(indices));
+        stdev_arr(i) = std(slope_arr(indices));
         i = i + 1;
-        
-        
     end
     
-    plot(bounds_A,stdevs_A);
-    xlabel("center of slope segment bounds");
-    ylabel("standard deviation of slope sub-segments");
-    
+    plot(tavg_arr,stdev_arr,'Color','g');
     
 end
 
