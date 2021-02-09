@@ -1,131 +1,173 @@
-function [a,N_amp,ftau,P] = findanf_epica(obj)
+function [a_final,N,f,P_final] = findanf_epica(obj,Y,M,d,h)
 % 
+% FUNCTION: findanf_epica(obj)
 %
+% PURPOSE: extracts stochastic model parameters a, N, f, P from data
+%
+% INPUT: 
+% - obj - DataSet object containing the data to be analyzed
+% - Y: number of years to divide dataset into
+% - M: number of months to divide each year into
+%
+% OUTPUT:
+% - a: array of monthly stability parameters
+% - N_amp: array of noise amplitudes
+% - ftau: array of slow forcing values
+% - P: periodic parameter used to find a
+%
+
+
+    %% convert raw data to (year,month) averaged matrix
+    % no need to interpolate since we've already averaged!
     
-    % interpolate
-    [~, x] = interpolate(obj.X, obj.Y, obj.data_res, "makima");
+    [~,data,delt,~] = data2matrix(obj,Y,M);
 
     
-    %% set parameters for timegaps and number of sectors/points
 
-    Y = 40;                    % number of "years"
-    M = floor(length(x) / Y);  % number of "months" in each "year"
-    
-    
-
-    %% find S(i) = variance of points in "month" k
+    %% find S(m) = variance of month m data (over all years)
     
     S = zeros(M,1);
-    summ = 0;
-    for k=1:M
-        for i=0:Y-1
-            disp(i*M + k);
-            summ = summ + x(i*M + k) * x(i*M + k);
+    for m=1:M
+        summ = 0;
+        for y=1:Y
+            summ = summ + data(y,m) * data(y,m);
         end
-        S(k+1) = summ / (Y-1);
+        S(m) = summ / (Y-1);
     end
 
 
 
-    %% find A(i) = autocorrelation between "months" within ith "year"
+    %% find A(m) = inter-monthly autocorrelation of months m & m+1 (over all years)
     
-    A = zeros(M-1,1);
-    summ = 0;
-    for k=1:M
-        for i=0:Y-2
-            summ = summ + x(i*M + k) * x((i+1)*M + k);
+    A = zeros(M,1);
+    for m=1:M
+        summ = 0;
+        for y=1:Y
+            if m == M  % loop around from last month to first month
+                if y < Y
+                    summ = summ + data(y,m) * data(y+1,1);
+                end
+            else        % normal, m & m+1
+                summ = summ + data(y,m) * data(y,m+1);
+            end
         end
-        A(k+1) = summ / (Y-1);
+        A(m) = summ / (Y-1);
     end
 
 
-    %% find B(i) = autocorrelation of kth month over m "years"
+    %% find B(m) = inter-year autocorrelation of month m (between years y and y+i)
     
-    m = 2;
     B = zeros(M,1);
-    summ = 0;
-    for k=1:M
-        for i=0:Y-m-1
-            summ = summ + x(i*M + k) * x(i*(M+m) + k);
-        end
-        B(k+1) = summ / (Y-m-1);
-    end
-
-
-
-    %% find derived quantities G(k) and H(k)
+    fprintf("finding B with d=%d :\n",d);
     
-    G = zeros(M-1,1);
-    H = zeros(M-1,1);
-    for k=1:M-1	% has to be M-1 since A(i) has max i=M-1
-        G(k) = (S(k) - A(k)) / S(k);
-        H(k) = (S(k) - B(k)) / S(k);
+    if d >= Y-1
+        disp("ERROR - d must be < Y-1");
+    end
+    
+    for m=1:M
+        summ = 0;
+        for y=1:Y-d
+            summ = summ + data(y,m) * data(y+d,m);
+        end
+        B(m) = summ / (Y-d-1);
     end
 
 
 
-    %% use RK4 to solve for P(k) - using ENAS 441 code!
-    P = RK4_P(Y,M,G,H);
+    %% find derived quantities G(m) and H(m)
+    
+    G = zeros(M,1);
+    H = zeros(M,1);
+    for m=1:M	% has to be M-1 since A(m) has max m=M-1
+        G(m) = 1/delt * (S(m) - A(m)) / S(m);
+        H(m) = (S(m) - B(m)) / S(m);
+    end
+
     
 
+    %% use RK4 to solve for P(m) - using altered ENAS 441 code!
+    P = RK4_P(Y,M,G,H,h); 
+    P_final = P(end-M+1:end);
+    
 
-    %% solve for a(k) = sector stability, using P(k)
-    a = zeros(Y,1);
-    for k=1:Y-1
-        a(k) = 1/P(k) * (H(k) - G(k)*P(k) - 1.0);
+    %% find a(m) = sector stability, using P, G, H
+    
+    a = zeros(length(P),1);
+    for m=1:length(P)
+        m_mod = mod_1n(m,M);
+        a(m) = 1/P(m) * (H(m_mod) - G(m_mod)*P(m) - 1.0);
     end
 
+    a_final = a(end-M+1:end);
+    
+    
+    %% find N(m) = noise amplitude
 
-    %% find N(i) = noise amplitude
-
-    % first, compute y(t)
-    y = zeros(Y*M,1);
-    for k=1:M
-        for i=0:Y-2
-            y(i*M + k) = x((i+1)*M + k) - x(i*M + k) - a(k+1) * x(i*M + k);
+    % compute g(t)
+    g = zeros(Y,M);
+    for m=1:M
+        for y=1:Y
+            if m == M
+                if y ~= Y
+                    g(y,m) = data(y+1,1) - data(y,m) - a(m) * data(y,m);
+                end
+            else
+                g(y,m) = data(y,m+1) - data(y,m) - a(m) * data(y,m);
+            end
         end
     end
 
-    % then, use y(t) to find y's variance (over "years" = among points in a sector, j) and autocorrelation (between "months" = sectors, i)
-    y_var = zeros(Y-1,1);
-    y_atc = zeros(Y-1,1);
+    %%
+    
+    % then, find g's variance & intermonth autocorr over years
+    g_var = zeros(Y-1,1);
+    g_atc = zeros(Y-1,1);
     summ_var = 0;
     summ_atc = 0;
-    for k=0:Y-2
-        for i=1:M
-        summ_var = summ_var + y(k*M + i)^2;
-        summ_atc = summ_atc + y(k*M + i) * y((k+1) * M + i);
+    for m=1:M
+        for y=1:Y
+            summ_var = summ_var + g(y,m)^2;
+            if m == M
+                if y ~= Y
+                    summ_atc = summ_atc + g(y,m) * g(y+1,1);
+                end
+            end
         end
-        y_var(k+1) = summ_var / (M-1);
-        y_atc(k+1) = summ_atc / (M-1);
+        g_var(m) = summ_var / (M-1);
+        g_atc(m) = summ_atc / (M-1);
+    end
+    
+    
+
+    % use g's variance and autocorrelation to estimate noise amplitude
+    N = zeros(M,1);
+    for m=1:M
+        N(m) = sqrt(g_var(m) - g_atc(m));
     end
 
-    % finally, use y variance and autocorrelation to estimate noise amplitude
-    N_amp = zeros(Y-1,1);
-    for k=1:M-1
-        N_amp(k+1) = sqrt(y_var(k+1) - y_atc(k+1));
-    end
-
-
-    %% find f(i) = long-term backbone
-    ftau = zeros(Y,1);
+ 
+    
+    %% find f(tau) = long-term backbone
+    f = zeros(Y,1);
     summ = 0;
-    for k=1:M
-        for i=0:Y-1
-            summ = summ + (x(i*M + (k+1)) - x(i*M + k)) - a(k+1) * x(i*M + k);
+    for y=1:Y
+        for m=1:M
+            if m == M
+                if y ~= Y
+                    summ = summ + (data(y,m) - data(y,m-1))/delt - a_final(m) * data(y,m);
+                end
+            else
+                summ = summ + (data(y,m+1) - data(y,m))/delt - a_final(m) * data(y,m);
+            end
         end
-        ftau(k+1) = summ / M;
+        f(y) = summ / M;
     end
-
     
     close all;
     hold on;
-    plot(a);
-    plot(ftau);
-    plot(N_amp);
     plot(P);
-    plot(G);
-    plot(H);
-    plot(S);
-    legend("a","ftau","N_amp","P","G","H","S");
+    plot(a);
+
+    
+    
 end

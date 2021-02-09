@@ -3,10 +3,12 @@ function [filepath_in, data_subfolder, figs_subfolder, figs_compare, varnames, c
 
     
     if obj.user_id == "CL"
-        tag = "C:\Users\charl\Documents\GitHub\";
+        tag = "C:\Users\charl\Documents\GitHub";
 
     elseif obj.user_id == "NK"
-        tag = "C:\Users\ndbke\Dropbox\_NDBK\Research\mftwdfa\";
+        tag = "C:\Users\ndbke\Dropbox\_NDBK\Research\mftwdfa";
+    elseif obj.user_id == "NK_loaner"
+        tag = "C:\Users\ndk9\Dropbox\_NDBK\Research\mftwdfa\";
     end
     
     base_folder = strcat(tag,"mftwdfa_code\");
@@ -22,7 +24,7 @@ function [filepath_in, data_subfolder, figs_subfolder, figs_compare, varnames, c
     if obj.data_name == "spice-temp"
 
         % ----- SETTINGS FOR INPUT: CLIMATE DATA FILE ----- %
-        filepath_in = strcat(tag,"\mftwdfa_code\data\spice_RAW\spice_age_d18O.csv");
+        filepath_in = strcat(tag,"mftwdfa_code\data\spice_RAW\spice_age_d18O.csv");
         varnames = {'Age','d18O_cm_ave'};
         cutoff = 1;
         t_scale = 1;
@@ -39,7 +41,7 @@ function [filepath_in, data_subfolder, figs_subfolder, figs_compare, varnames, c
     elseif obj.data_name == "epica-co2"
 
         % ----- SETTINGS FOR INPUT ----- %
-        filepath_in = strcat(tag,"\mftwdfa_code\data\epica_RAW\edc3-2008_co2_DATA-series3-composite.txt");
+        filepath_in = strcat(tag,"mftwdfa_code\data\epica_RAW\edc3-2008_co2_DATA-series3-composite.txt");
         varnames = {'Age_yrBP_','CO2_ppmv_'};
         cutoff = 1;
         t_scale = 1;
@@ -56,7 +58,7 @@ function [filepath_in, data_subfolder, figs_subfolder, figs_compare, varnames, c
     elseif obj.data_name == "epica-ch4"
         
         % ----- SETTINGS FOR INPUT ----- %
-        filepath_in = strcat(tag,"\mftwdfa_code\data\epica_RAW\edc3-2008_ch4_DATA.txt");
+        filepath_in = strcat(tag,"mftwdfa_code\data\epica_RAW\edc3-2008_ch4_DATA.txt");
         varnames = {'Var2','Var3'};
         cutoff = 1;
         t_scale = 1;
@@ -71,7 +73,7 @@ function [filepath_in, data_subfolder, figs_subfolder, figs_compare, varnames, c
     elseif obj.data_name == "epica-temp"
 
         % ----- SETTINGS FOR INPUT: CLIMATE DATA FILE ----- %
-        filepath_in = strcat(tag,"\mftwdfa_code\data\epica_RAW\edc3-2007_temperature_DATA.txt");
+        filepath_in = strcat(tag,"mftwdfa_code\data\epica_RAW\edc3-2007_temperature_DATA.txt");
         varnames = {'Age','Temperature'};
         cutoff = 13;
         t_scale = 1;
