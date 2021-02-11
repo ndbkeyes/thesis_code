@@ -18,13 +18,10 @@ function [matrix_x,matrix_y,M_length,mean_y] = data2matrix(obj,Y,M)
 
 %%
     
-    % initialize empty matrices
-    matrix_x = zeros(Y,M);
-    matrix_y = zeros(Y,M);
     
     % interpolate first so we don't have to worry about varying data
     % density limiting choice of year and month lengths
-    [xx,yy] = interpolate(obj.X,obj.Y,Y*M*20,"makima");
+    [xx,yy] = interpolate(obj.X,obj.Y,Y*M*100,"makima");
     
     % translate X-values (time) so that it starts at zero rather than -800kyr
     xx = xx - min(xx);
@@ -41,6 +38,9 @@ function [matrix_x,matrix_y,M_length,mean_y] = data2matrix(obj,Y,M)
     
 %%
 
+    matrix_x = zeros(Y,M);
+    matrix_y = zeros(Y,M);
+
     % loop over (year,month) pairs
     for y=1:Y
         for m=1:M     
@@ -50,7 +50,6 @@ function [matrix_x,matrix_y,M_length,mean_y] = data2matrix(obj,Y,M)
             t_max = (y-1)*Y_length + m*M_length;
             summ = 0;
             n = 0;
-            % fprintf("Year: %d, Month: %d     t_min: %.2f, t_max: %.2f\n",y,m,t_min,t_max);
             
             % find datapoints that fall in correct time interval for (y,m)
             for i=1:length(xx)
@@ -60,21 +59,21 @@ function [matrix_x,matrix_y,M_length,mean_y] = data2matrix(obj,Y,M)
                 end
             end
             
-            
-%             if n == 0
-%                 fprintf("%d,%d: has 0 points. ERROR - program terminating.\n",y,m);
-%                 return
-%             else
-%                 fprintf("%d,%d: has %d points.\n",y,m,n);
-%             end
-            
-            
             % add average x and y coordinates of points into matrix
             matrix_x(y,m) = (t_min + t_max) / 2 + min(obj.X);
             matrix_y(y,m) = summ / n;
             
         end
     end
+    
+%     mat_x_flat = reshape(matrix_x,[],1);
+%     mat_y_flat = reshape(matrix_y,[],1);
+%    
+%     close all;
+%     hold on;
+%     scatter(mat_x_flat,mat_y_flat);
+%     xx_orig = xx - max(xx);
+%     plot(xx_orig,yy);
     
     % translate data down so that average is zero! (needed for variance calculations)
     mean_y = mean(matrix_y,'all');

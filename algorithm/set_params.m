@@ -6,9 +6,8 @@ function [filepath_in, data_subfolder, figs_subfolder, figs_compare, varnames, c
         tag = "C:\Users\charl\Documents\GitHub";
 
     elseif obj.user_id == "NK"
-        tag = "C:\Users\ndbke\Dropbox\_NDBK\Research\mftwdfa";
-    elseif obj.user_id == "NK_loaner"
-        tag = "C:\Users\ndk9\Dropbox\_NDBK\Research\mftwdfa\";
+        tag = "C:\Users\ndbke\Dropbox\_NDBK\Research\mftwdfa\";
+
     end
     
     base_folder = strcat(tag,"mftwdfa_code\");

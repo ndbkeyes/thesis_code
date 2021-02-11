@@ -2,8 +2,7 @@ function [obj_arr,mset_arr] = make_objs()
 
     % make object for each dataset
     data_names = ["epica-co2", "epica-ch4", "epica-temp"];
-    user_id = "NK_loaner";
-    normed = 0;
+    user_id = "NK";
     obj_arr = {};
     mset_arr = {};
 

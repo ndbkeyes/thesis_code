@@ -1,4 +1,4 @@
-function [a_est,N,d] = findanf_woosok(obj,Y,M)
+function [a_est,N] = findanf_woosok(obj,Y,M)
 
 
     %% convert raw data to (year,month) averaged matrix
@@ -30,6 +30,8 @@ function [a_est,N,d] = findanf_woosok(obj,Y,M)
             if m == M  % loop around from last month to first month
                 if y < Y
                     summ = summ + data(y,m) * data(y+1,1);
+                else    % unless it's the last year, in which case just approximate with autocorr
+                    summ = summ + data(y,m) * data(y,m);
                 end
             else        % normal, m & m+1
                 summ = summ + data(y,m) * data(y,m+1);
@@ -56,6 +58,5 @@ function [a_est,N,d] = findanf_woosok(obj,Y,M)
     %% estimate N
     
     N = 0;
-    d = 0;
     
 end

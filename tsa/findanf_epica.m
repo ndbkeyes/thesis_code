@@ -43,23 +43,24 @@ function [a_final,N,f,P_final] = findanf_epica(obj,Y,M,d,h)
     for m=1:M
         summ = 0;
         for y=1:Y
-            if m == M  % loop around from last month to first month
+            if m == M   % loop around from last month to first month
                 if y < Y
                     summ = summ + data(y,m) * data(y+1,1);
+                else    % unless it's the last year, in which case just approximate with autocorr
+                    summ = summ + data(y,m) * data(y,m);
                 end
-            else        % normal, m & m+1
+            else        % normal inter-month corr, m & m+1
                 summ = summ + data(y,m) * data(y,m+1);
             end
         end
         A(m) = summ / (Y-1);
     end
+   
 
-
+    
     %% find B(m) = inter-year autocorrelation of month m (between years y and y+i)
     
-    B = zeros(M,1);
-    fprintf("finding B with d=%d :\n",d);
-    
+    B = zeros(M,1);    
     if d >= Y-1
         disp("ERROR - d must be < Y-1");
     end
@@ -71,6 +72,8 @@ function [a_final,N,f,P_final] = findanf_epica(obj,Y,M,d,h)
         end
         B(m) = summ / (Y-d-1);
     end
+    
+    
 
 
 
@@ -82,6 +85,8 @@ function [a_final,N,f,P_final] = findanf_epica(obj,Y,M,d,h)
         G(m) = 1/delt * (S(m) - A(m)) / S(m);
         H(m) = (S(m) - B(m)) / S(m);
     end
+    
+    
 
     
 
@@ -163,10 +168,17 @@ function [a_final,N,f,P_final] = findanf_epica(obj,Y,M,d,h)
         f(y) = summ / M;
     end
     
-    close all;
-    hold on;
-    plot(P);
-    plot(a);
+%     close all;
+%     hold on;
+%     plot(A);
+%     plot(S);
+%     plot(B);
+%     plot(G);
+%     plot(H);
+%     plot(-a_final);
+%     legend("A","S","B","G","H","-a(t)");
+%     close all;
+%     plot(G);
 
     
     
