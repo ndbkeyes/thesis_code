@@ -72,8 +72,8 @@ function [filepath_in, data_subfolder, figs_subfolder, figs_compare, varnames, c
     elseif obj.data_name == "epica-temp"
 
         % ----- SETTINGS FOR INPUT: CLIMATE DATA FILE ----- %
-        filepath_in = strcat(tag,"mftwdfa_code\data\epica_RAW\edc3-2007_temperature_DATA.txt");
-        varnames = {'Age','Temperature'};
+        filepath_in = strcat(tag,"mftwdfa_code\data\epica_RAW\aicc2012icecore-data.csv");
+        varnames = {'Age','dD'};
         cutoff = 13;
         t_scale = 1;
 

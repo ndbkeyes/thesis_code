@@ -1,4 +1,4 @@
-function [tscale_arr, curvature_arr] = slope_curvature(obj, mftwdfa_settings, increments, bounds)
+function [plt_slope, plt_curv, tscale_arr, curvature_arr] = slope_curvature(obj, mftwdfa_settings, increments, bounds)
 %
 % FUNCTION: slope_curvature(obj, mftwdfa_settings)
 %
@@ -23,8 +23,8 @@ function [tscale_arr, curvature_arr] = slope_curvature(obj, mftwdfa_settings, in
     %% try using slope_smoothed a second time, implement when i have time???
     
     hold on;
-    plot(tscale_arr,slope_arr,'Color','b');
-    plot(tscale_arr,curvature_arr,'Color','r');
+    plt_slope = plot(tscale_arr,slope_arr,'Color','b');
+    plt_curv = plot(tscale_arr,curvature_arr,'Color','r');
     saveas(gcf,sprintf("%s%s_curvature.fig",obj.figs_subfolder,obj.data_name)); 
 
 end

@@ -1,4 +1,4 @@
-function [tavg_arr, std_arr] = slope_stdev(obj, mftwdfa_settings, increments, bounds)
+function [plt_stdev, tavg_arr, std_arr] = slope_stdev(obj, mftwdfa_settings, increments, bounds)
 %
 % FUNCTION: slope_stdev(obj, mftwdfa_settings, bounds, increment)
 %
@@ -35,7 +35,7 @@ function [tavg_arr, std_arr] = slope_stdev(obj, mftwdfa_settings, increments, bo
         i = i + 1;
     end
     
-    plot(tavg_arr,stdev_arr,'Color','g');
+    plt_stdev = plot(tavg_arr,stdev_arr,'Color','g');
     
 end
 

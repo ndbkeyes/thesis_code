@@ -1,4 +1,4 @@
-function P = RK4_P(Y,M,G,H,dt)
+function P = RK4_P(Y,M,G,H,delt)
 %
 % FUNCTION: RK4_P(Y,M,G,H,delt)
 %
@@ -42,7 +42,6 @@ function P = RK4_P(Y,M,G,H,dt)
     P = double.empty(0,M*Y-1);
     
     pold = 1.0;
-    delt = dt;
     
 
 %% main loop

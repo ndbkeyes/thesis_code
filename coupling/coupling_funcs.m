@@ -8,27 +8,20 @@ warning('off','all');
 % ===== LOAD DATA ===== %
 
 
-
-% data set 1: co2
-dataname_1 = "co2";
-[filepath_in, varnames, read_settings, ~, ~, ~, ~, ~] = set_params(dataname_1);
-[X1,Y1] = load_data(filepath_in, varnames, read_settings);
-
-% data set 2: temperature
-dataname_2 = "ch4";
-[filepath_in, varnames, read_settings, ~, ~, ~, ~, ~] = set_params(dataname_2);
-[X2,Y2] = load_data(filepath_in, varnames, read_settings);
-
-dataname_3 = "temperature";
-[filepath_in, varnames, read_settings, ~, ~, ~, ~, ~] = set_params(dataname_3);
-[X3,Y3] = load_data(filepath_in, varnames, read_settings);
+obj_arr = make_objs();
+X1 = obj_arr{1}.X;
+Y1 = obj_arr{1}.Y;
+X2 = obj_arr{2}.X;
+Y2 = obj_arr{2}.X;
+X3 = obj_arr{3}.X;
+Y3 = obj_arr{3}.X;
 
 
 
 
 % ===== SETTINGS & INIT ARRAYS ===== %
 
-DIM = 3;
+DIM = 2;
 n_windows = 80;
 interp_res = 2000;
 
@@ -60,7 +53,7 @@ for i=1:n_windows
         x2 = data2_arr{1,i};
         y2 = data2_arr{2,i};
 
-        [a1, a2, b12, b21] = coupling_2D(x1, y1, x2, y2, interp_res);
+        [a1, a2, b12, b21] = coupling_2D(obj_arr{1}, obj_arr{2}, interp_res);
 
         a1_arr{i} = a1;
         a2_arr{i} = a2;
@@ -81,7 +74,7 @@ for i=1:n_windows
         x3 = data3_arr{1,i};
         y3 = data3_arr{2,i};
 
-        [a1, a2, a3, b12, b13, b21, b23, b31, b32] = coupling_3D(x1, y1, x2, y2, x3, y3, interp_res);
+        [a1, a2, a3, b12, b13, b21, b23, b31, b32] = coupling_3D(obj_arr{1},obj_arr{2},obj_arr{3}, interp_res);
 
         a1_arr{i} = a1;
         a2_arr{i} = a2;
@@ -114,10 +107,9 @@ if DIM == 2
     plot(increment_coords,cell2mat(b12_arr));
     plot(increment_coords,cell2mat(a1_arr)-cell2mat(b12_arr));
     legend("a1","b12", "a1-b12");
-    title(sprintf("stability & coupling: %s (coupled to %s)", dataname_1, dataname_2));
+    title(sprintf("stability & coupling: %s (coupled to %s)", obj_arr{1}.data_name, obj_arr{2}.data_name));
     xlim([-800000-increment,0]);
-    saveas(gcf, sprintf("%scoupling2d_%s-%s_%d-%d.fig", result_folder, dataname_1, dataname_2, n_windows, interp_res));
-    saveas(gcf, sprintf("%scoupling2d_%s-%s_%d-%d.png", result_folder, dataname_1, dataname_2, n_windows, interp_res));
+    saveas(gcf, sprintf("coupling2d_%s-%s_%d-%d.jpeg", obj_arr{1}.data_name, obj_arr{2}.data_name, n_windows, interp_res));
 
 
     close all;
@@ -126,10 +118,9 @@ if DIM == 2
     plot(increment_coords,cell2mat(b21_arr));
     plot(increment_coords,cell2mat(a2_arr)-cell2mat(b21_arr));
     legend("a2","b21", "a2-b21");
-    title(sprintf("stability & coupling: %s (coupled to %s)", dataname_2, dataname_1));
+    title(sprintf("stability & coupling: %s (coupled to %s)", obj_arr{1}.data_name, obj_arr{2}.data_name));
     xlim([-800000-increment,0]);
-    saveas(gcf, sprintf("%scoupling2d_%s-%s_%d-%d.fig", result_folder, dataname_2, dataname_1, n_windows, interp_res));
-    saveas(gcf, sprintf("%scoupling2d_%s-%s_%d-%d.png", result_folder, dataname_2, dataname_1, n_windows, interp_res));
+    saveas(gcf, sprintf("coupling2d_%s-%s_%d-%d.jpeg", obj_arr{2}.data_name, obj_arr{1}.data_name, n_windows, interp_res));
 
 
 
@@ -143,10 +134,10 @@ elseif DIM == 3
     plot(increment_coords,cell2mat(a1_arr)-cell2mat(b12_arr));
     plot(increment_coords,cell2mat(a1_arr)-cell2mat(b13_arr));
     legend("a1","b12", "b13", "a1-b12", "a1-b13");
-    title(sprintf("stability & coupling: %s (coupled to [2] %s and [3] %s)", dataname_1, dataname_2, dataname_3));
+    title(sprintf("stability & coupling: %s (coupled to [2] %s and [3] %s)", obj_arr{1}.data_name, obj_arr{2}.data_name, obj_arr{3}.data_name));
     xlim([-800000-increment,0]);
-    saveas(gcf, sprintf("%scoupling2d_%s-%s+%s_%d-%d.fig", result_folder, dataname_1, dataname_2, dataname_3, n_windows, interp_res));
-    saveas(gcf, sprintf("%scoupling2d_%s-%s+%s_%d-%d.png", result_folder, dataname_1, dataname_2, dataname_3, n_windows, interp_res));
+    saveas(gcf, sprintf("coupling2d_%s-%s+%s_%d-%d.fig", obj_arr{1}.data_name, obj_arr{2}.data_name, obj_arr{3}.data_name, n_windows, interp_res));
+    saveas(gcf, sprintf("coupling2d_%s-%s+%s_%d-%d.png", obj_arr{1}.data_name, obj_arr{2}.data_name, obj_arr{3}.data_name, n_windows, interp_res));
     
     % (2)
     close all;
@@ -157,10 +148,10 @@ elseif DIM == 3
     plot(increment_coords,cell2mat(a2_arr)-cell2mat(b21_arr));
     plot(increment_coords,cell2mat(a2_arr)-cell2mat(b23_arr));
     legend("a2","b21", "b23", "a2-b21", "a2-b23");
-    title(sprintf("stability & coupling: %s (coupled to [1] %s and [3] %s)",  dataname_2, dataname_1, dataname_3));
+    title(sprintf("stability & coupling: %s (coupled to [1] %s and [3] %s)",  obj_arr{2}.data_name, obj_arr{1}.data_name, obj_arr{3}.data_name));
     xlim([-800000-increment,0]);
-    saveas(gcf, sprintf("%scoupling2d_%s-%s+%s_%d-%d.fig", result_folder, dataname_2, dataname_1, dataname_3, n_windows, interp_res));
-    saveas(gcf, sprintf("%scoupling2d_%s-%s+%s_%d-%d.png", result_folder, dataname_2, dataname_1, dataname_3, n_windows, interp_res));
+    saveas(gcf, sprintf("coupling2d_%s-%s+%s_%d-%d.fig", obj_arr{2}.data_name, obj_arr{1}.data_name, obj_arr{3}.data_name, n_windows, interp_res));
+    saveas(gcf, sprintf("coupling2d_%s-%s+%s_%d-%d.png", obj_arr{2}.data_name, obj_arr{1}.data_name, obj_arr{3}.data_name, n_windows, interp_res));
     
     % (3)
     close all;
@@ -171,10 +162,10 @@ elseif DIM == 3
     plot(increment_coords,cell2mat(a3_arr)-cell2mat(b31_arr));
     plot(increment_coords,cell2mat(a3_arr)-cell2mat(b32_arr));
     legend("a3","b31", "b32", "a3-b31", "a3-b32");
-    title(sprintf("stability & coupling: %s (coupled to [1] %s and [2] %s)", dataname_3, dataname_1, dataname_2));
+    title(sprintf("stability & coupling: %s (coupled to [1] %s and [2] %s)", obj_arr{3}.data_name, obj_arr{1}.data_name, obj_arr{2}.data_name));
     xlim([-800000-increment,0]);
-    saveas(gcf, sprintf("%scoupling2d_%s-%s+%s_%d-%d.fig", result_folder, dataname_3, dataname_1, dataname_2, n_windows, interp_res));
-    saveas(gcf, sprintf("%scoupling2d_%s-%s+%s_%d-%d.png", result_folder, dataname_3, dataname_1, dataname_2, n_windows, interp_res));
+    saveas(gcf, sprintf("coupling2d_%s-%s+%s_%d-%d.fig", obj_arr{3}.data_name, obj_arr{1}.data_name, obj_arr{2}.data_name, n_windows, interp_res));
+    saveas(gcf, sprintf("coupling2d_%s-%s+%s_%d-%d.png", obj_arr{3}.data_name, obj_arr{1}.data_name, obj_arr{2}.data_name, n_windows, interp_res));
     
     
 end
