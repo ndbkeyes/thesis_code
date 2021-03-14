@@ -1,6 +1,6 @@
 function [plt_slope, plt_curv, tscale_arr, curvature_arr] = slope_curvature(obj, mftwdfa_settings, increments, bounds)
 %
-% FUNCTION: slope_curvature(obj, mftwdfa_settings)
+% FUNCTION: slope_curvature(obj, mftwdfa_settings, increments, bounds)
 %
 % PURPOSE: find and plot the curvature of the MFTWDFA fluctuation function
 %

@@ -8,10 +8,10 @@ function [plt_stdev, tavg_arr, std_arr] = slope_stdev(obj, mftwdfa_settings, inc
 %
 % INPUT:
 % - usual obj & mftwdfa_settings
-% - bounds: {lowerbound, upperbound} for whole slope area being analyzed
 % - increments: 
 %       - (1) amt to move (A) largest slope segment by on each iteration
 %       - (2) size of (B) sub-segments of (A) used to find stdev of slopes
+% - bounds: {lowerbound, upperbound} for whole slope area being analyzed
 %
 % OUTPUT:
 % - slope_std: standard deviation of the sub-segment slopes

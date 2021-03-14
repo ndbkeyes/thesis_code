@@ -1,4 +1,8 @@
 function b_plot(obj,Y,M)
+%
+% plot B(k) for a range of values of m to see how autocorrelation interval
+% for f affects B
+%
 
     [~,data,~,~] = data2matrix(obj,Y,M);
 

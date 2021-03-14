@@ -1,4 +1,16 @@
 function [xF,F] = power_spectrum(obj)
+%
+% FUNCTION: [xF, F] = power_spectrum(obj)
+%
+% PURPOSE: get power spectrum of data from obj dataset
+%
+% INPUT: - obj: DataSet to analyze
+%
+% OUTPUT: 
+% - xF: frequency values for which we've found the power
+% - F: power spectrum values
+%
+%%
     
     [xx,yy] = interpolate(obj.X, obj.Y, obj.data_res, "makima");
     

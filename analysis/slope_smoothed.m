@@ -1,4 +1,22 @@
 function [tscale_arr, slope_arr] = slope_smoothed(obj, mftwdfa_settings, increments, bounds)
+%
+% FUNCTION: slope_smoothed(obj, mftwdfa_settings)
+%
+% PURPOSE: find and plot the smoothed slope of the MFTWDFA fluctuation
+% function for q=2 by linear fitting adjacent sections of slope
+%
+% INPUT:
+% - usual obj (DataSet object) and mftwdfa_settings (interpolation scheme,
+% interpolation resolution, statistical moment)
+% - increment array: {increment_A, increment_B}
+%             where: A = shift between segments, B = size of slope segment
+% - bounds: lower and upper bounds of the region in the fluctuation
+% function to analyze
+%
+% OUTPUT:
+% - plot smoothed 2nd deriv (curvature) of fluct func
+%
+%%
 
     % read in fluctuation function
     [t_arr, f_arr] = read_data(obj, mftwdfa_settings);

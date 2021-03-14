@@ -2,7 +2,9 @@ function avg_slope = avg_slope(obj,settings,slope_bounds,makeplot)
 %
 % FUNCTION: avg_slope(obj,settings,slope_bounds)
 %
-% PURPOSE: find the average slope of the MFTWDFA fluctuation function for the given lower/upper slope bounds
+% PURPOSE: find the average slope of the MFTWDFA fluctuation function for 
+% the given lower/upper slope bounds by fitting a straight line to that
+% portion of the fluct_2 function
 %
 % INPUT:
 % - obj: DataSet object of data set to be analyzed
@@ -12,7 +14,9 @@ function avg_slope = avg_slope(obj,settings,slope_bounds,makeplot)
 % OUTPUT:
 % - avg_slope: the slope of the best-fit line of log F_2(log t) between the two bounds in slope_bounds
 %
+%%
 
+    % default to not plotting
     if nargin == 3
         makeplot = 0;
     end
@@ -55,6 +59,7 @@ function avg_slope = avg_slope(obj,settings,slope_bounds,makeplot)
     beta = t_arr_col \ f_arr; % using backslash operator to get slope
     avg_slope = beta(2);
     
+    % plot slopes if asked
     if makeplot
         hold on;
         plot(t_arr, t_arr * beta(2) + beta(1));

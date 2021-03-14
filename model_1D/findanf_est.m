@@ -1,10 +1,24 @@
 function [a_est,N] = findanf_est(obj,Y,M)
-% Woosok's simpler method for parameter extraction
+% 
+% FUNCTION: findanf_epica(obj)
+%
+% PURPOSE: extracts stochastic model parameters a, N, f, P from data using
+% simpler method estimating a(k) ~ -G(k); no m needed
+%
+% INPUT: 
+% - obj: DataSet object containing the data to be analyzed
+% - Y: number of years to divide dataset into
+% - M: number of months to divide each year into
+%
+% OUTPUT:
+% - a_est: array of monthly stability parameters
+% - N: array of noise amplitudes
+%
 
 
     %% convert raw data to (year,month) averaged matrix
     
-    [~,data,delt,~] = data2matrix(obj,Y,M);
+    [~,data,delt] = data2matrix(obj,Y,M);
 
     
 
@@ -43,7 +57,7 @@ function [a_est,N] = findanf_est(obj,Y,M)
 
 
 
-    %% estimate a(k) by finding G
+    %% estimate a(k) by finding G(k)
     
     G = zeros(M,1);
     for k=1:M	% has to be M-1 since A(m) has max m=M-1
@@ -85,9 +99,6 @@ function [a_est,N] = findanf_est(obj,Y,M)
     for k=1:M
         N(k) = sqrt(y_var(k) / delt);
     end
-    
-    
-    
-    
+       
     
 end

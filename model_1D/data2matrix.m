@@ -1,4 +1,4 @@
-function [matrix_x,matrix_y,M_length,mean_y] = data2matrix(obj,Y,M)
+function [matrix_x,matrix_y,M_length] = data2matrix(obj,Y,M)
 %
 % FUNCTION: data2matrix(obj,Y,M)
 %
@@ -13,9 +13,7 @@ function [matrix_x,matrix_y,M_length,mean_y] = data2matrix(obj,Y,M)
 % OUTPUT: 
 % - matrix_x: Y x M matrix containing the average time coordinate for each (year,month)
 % - matrix_y: Y x M matrix containing the average y-coordinate for each (year,month)
-
-
-
+%
 %%
     
     
@@ -38,6 +36,7 @@ function [matrix_x,matrix_y,M_length,mean_y] = data2matrix(obj,Y,M)
     
 %%
 
+    % initialize matrices to hold x and y averaged data values
     matrix_x = zeros(Y,M);
     matrix_y = zeros(Y,M);
 
@@ -76,8 +75,9 @@ function [matrix_x,matrix_y,M_length,mean_y] = data2matrix(obj,Y,M)
 %     plot(xx_orig,yy);
     
     % translate data down so that average is zero! (needed for variance calculations)
+    % and set the shift as a global variable so it's easy to use everywhere
+    global mean_y
     mean_y = mean(matrix_y,'all');
     matrix_y = matrix_y - mean_y;
 
 end
-
