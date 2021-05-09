@@ -1,4 +1,4 @@
-function [xF,F] = power_spectrum(obj)
+function [xF,F] = power_spectrum(obj,col)
 %
 % FUNCTION: [xF, F] = power_spectrum(obj)
 %
@@ -11,10 +11,15 @@ function [xF,F] = power_spectrum(obj)
 % - F: power spectrum values
 %
 %%
+
+    if nargin == 1
+        col = 'black';
+    end
     
-    [xx,yy] = interpolate(obj.X, obj.Y, obj.data_res, "makima");
+    res = obj.data_res*2;
+    [xx,yy] = interpolate(obj.X, obj.Y, res, "makima");
     
-    tgap = range(obj.X) / obj.data_res;
+    tgap = range(obj.X) / res;
     n = length(xx);
 
     F = fft(yy);
@@ -22,9 +27,9 @@ function [xF,F] = power_spectrum(obj)
 
     xF = [0:n-1] * 1/(n*tgap);
 
-    nexttile;
-    plot(xF,F);
-    xlim([0.5*10^(-5),6*10^(-5)]);
+    %nexttile;
+    plot(xF,F,'Color',col);
+    %xlim([0.5*10^(-5),10*10^(-5)]);
     xlabel("frequency");
     ylabel("power");
     title(sprintf("Power spectrum of %s dataset",obj.data_name));

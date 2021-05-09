@@ -1,0 +1,331 @@
+function abN = coupling_2D(obj1,obj2,Y,M,br_win,plotting)
+%
+% FUNCTION: [a1, a2, b12, b21] = coupling_2D(obj1, obj2)
+%
+% PURPOSE: perform coupling analysis on the 2 inputted data sets
+%
+% INPUT: 
+% - obj1, obj2: DataSet objects holding the data sets we want to analyze coupling for
+%
+% OUTPUT:
+% - a1: stability of 1st set
+% - a2: stability of 2nd set
+% - b12: influence of 2nd set on 1st set
+% - b21: influence of 1st set on 2nd set
+%
+
+    if nargin == 4
+        br_win = 0;
+        plotting = 0;
+    elseif nargin == 5
+        plotting = 0;
+    end
+    
+
+    % get year/month averaged datasets
+    % x-values should be same since Y,M are equal so just use from n1
+    [~,n1_y,delt] = data2matrix(obj1,Y,M,br_win);
+    [~,n2_y,~] = data2matrix(obj2,Y,M,br_win);
+    
+    %{
+    close all;
+    hold on;
+    plot(reshape(n1_x',[],1),reshape(n1_y',[],1));
+    plot(reshape(n2_x',[],1),reshape(n2_y',[],1));
+    %}
+
+    
+    %% make empty arrays for all quantities
+    
+    AA = zeros(1,M);
+    BB = zeros(1,M);
+    AB = zeros(1,M);
+    
+    AAdt = zeros(1,M);
+    BAdt = zeros(1,M);
+    ABdt = zeros(1,M);
+    BBdt = zeros(1,M);
+    
+    AdA = zeros(1,M);
+    BdA = zeros(1,M);
+    AdB = zeros(1,M);
+    BdB = zeros(1,M);
+    
+    AdtAdt = zeros(1,M);
+    n2p1sq = zeros(1,M);
+
+    n1p1_dn1 = zeros(1,M);
+    n2p1_dn2 = zeros(1,M);
+    
+    
+    a1 = zeros(1,M);
+    a2 = zeros(1,M);
+    b12 = zeros(1,M);
+    b21 = zeros(1,M);
+    N1 = zeros(1,M);
+    N2 = zeros(1,M);
+
+    
+    
+    
+    for k=1:M
+        
+
+    %%% get quantities to use in system
+        
+        
+    %% A MATRIX QUANTITIES
+        
+        
+        %---- make base arrays ----%
+        if k == M
+            
+            n1 = n1_y(:,k);
+            n2 = n2_y(:,k);
+            n1p1 = circshift(n1_y(:,1),-1);
+            n2p1 = circshift(n2_y(:,1),-1);
+            
+            % n1,2(t)
+            n1 = n1(1:end-1);
+            n2 = n2(1:end-1);
+            % n1,2(t + \delta t)
+            n1p1 = n1p1(1:end-1);
+            n2p1 = n2p1(1:end-1);
+            
+        else
+            % n1,2(t)
+            n1 = n1_y(:,k);
+            n2 = n2_y(:,k);
+            % n1,2(t + \delta t)
+            n1p1 = n1_y(:,k+1);
+            n2p1 = n2_y(:,k+1);
+        end
+        
+
+        % < n_1,2(t)^2 >
+        AA(k) = mean( n1 .* n1 );
+        BB(k) = mean( n2 .* n2 );
+        
+        % < n_1(t) n_2(t) >
+        AB(k) = mean( n1 .* n2 );
+        
+
+        
+    %% Q VECTOR QUANTITIES
+        
+
+        % < n1,2(t) n1,2(t + \delta t) >
+        AAdt(k) = mean( n1 .* n1p1 );
+        BAdt(k) = mean( n2 .* n1p1 );
+        ABdt(k) = mean( n1 .* n2p1 );
+        BBdt(k) = mean( n2 .* n2p1 );
+        
+        
+        % (A) < n_1(t) dn_1/dt >
+        AdA(k) = (1/delt) * ( AAdt(k) - AA(k) );
+        % (B) < n_2(t) dn_1/dt >
+        BdA(k) = (1/delt) * ( BAdt(k) - AB(k) );
+        % (C) < n_1(t) dn_2/dt >
+        AdB(k) = (1/delt) * ( ABdt(k) - AB(k) );
+        % (D) < n_2(t) dn_2/dt >
+        BdB(k) = (1/delt) * ( BBdt(k) - BB(k) );
+        
+
+        
+%     %% N(k) QUANTITIES
+%         
+%         % < n1,2(t)^2 >
+%         AdtAdt(k) = mean( n1p1 .* n1p1 );
+%         n2p1sq(k) = mean( n2p1 .* n2p1 );
+%         
+%         % < n1,2(t + \delta t) dn_1,2/dt >
+%         n1p1_dn1(k) = (1/delt) * ( AdtAdt(k) - AAdt(k) );
+%         n2p1_dn2(k) = (1/delt) * ( n2p1sq(k) - BBdt(k) );
+%         
+%         
+%         
+        
+        
+        %{
+        fprintf("QUANTITIES (k=%d):\n", k);
+        fprintf("n1sq = %.5e, n2sq = %.5e, n1_n2 = %.5e, n1_n1p1 = %.5e, n2_n1p1 = %.5e, n1_n2p1 = %.5e, n2_n2p1 = %.5e\n", n1sq(k), n2sq(k), n1_n2(k), n1_n1p1(k), n2_n1p1(k), n1_n2p1(k), n2_n2p1(k));
+        fprintf("n1_dn1 = %.5e, n2_dn1 = %.5e, n1_dn2 = %.5e, n1_dn2 = %.5e\n", n1_dn1(k), n2_dn1(k), n1_dn2(k), n1_dn2(k));
+        fprintf("n1p1sq = %.5e, n2p1sq = %.5e, n1p1_dn1 = %.5e, n2p1_dn2 = %.5e\n", n1p1sq(k), n2p1sq(k), n1p1_dn1(k), n2p1_dn2(k));
+        %}
+    
+    
+    %% solve system for a1,2 and b12,21
+    
+        %%% A MATRICES
+
+        A1 = zeros(2,2);
+        A1(1,1) = AA(k);
+        A1(1,2) = AB(k) - AA(k);
+        A1(2,1) = AB(k);
+        A1(2,2) = BB(k) - AB(k);
+
+        A2 = zeros(2,2);
+        A2(1,1) = BB(k);
+        A2(1,2) = AB(k) - BB(k);
+        A2(2,1) = AB(k);
+        A2(2,2) = AA(k) - AB(k);
+
+
+        %%% Q VECTORS
+
+        Q1 = zeros(2,1);
+        Q1(1,1) = AdA(k);
+        Q1(2,1) = BdA(k);
+
+        Q2 = zeros(2,1);
+        Q2(1,1) = AdB(k);
+        Q2(2,1) = BdB(k);
+
+
+        % X vectors
+
+        X1 = inv(A1)*Q1;
+        X2 = inv(A2)*Q2;
+
+
+        % unpack coefficients from X
+
+        a1(k) = X1(1,1);   % set1 local stability
+        b12(k) = X1(2,1);  % set2 -> set1 influence
+
+        a2(k) = X2(1,1);   % set2 local stability
+        b21(k) = X2(2,1);  % set1 -> set2 influence
+
+
+        
+    %% derive N1,2(k)
+        
+%         N1_sq = n1p1_dn1(k) - a1(k) * AAdt(k) - b12(k) * (BAdt(k) - AAdt(k));
+%         N2_sq = n2p1_dn2(k) - a2(k) * BBdt(k) - b21(k) * (ABdt(k) - BBdt(k));
+%         
+%         if N1_sq < 0
+%             N1(k) = 0;
+%         else
+%             N1(k) = sqrt(N1_sq);
+%         end
+%         
+%         if N2_sq < 0
+%             N2(k) = 0;
+%         else
+%             N2(k) = sqrt(N2_sq);
+%         end
+
+    end
+    
+%     b21 = b21 + 0.004;
+%     N2 = N1 + 0.05;
+    
+    % package the parameter arrays to be returned
+    % (first row is a1, second row is a2, etc)
+    abN = [a1; a2; b12; b21; N1; N2];
+    
+%     % smooth parameters by interpolation
+%     for i=size(abN,1)
+%         abN(i,:) = makima(1:M,abN(i,:),M);
+%     end
+    
+%     % smooth the parameters by movmean
+%     win = max(ceil(M/5),2); 
+%     abN = movmean(abN,win,2);   % use dim=2 to do moving avg along rows
+%     
+    
+    abN = smoothdata(abN',"Gaussian",10);
+    abN = abN';
+    
+    
+    %{
+    %%% PLOT LINEAR SYSTEM QUANTITIES IF DESIRED 
+    tiledlayout("flow");
+    
+    nexttile
+    hold on;
+    plot(n1sq);
+    plot(n2sq);
+    plot(n1_n2);
+    legend("n1sq","n2sq","n1-n2");
+    
+    nexttile
+    hold on;
+    plot(n1_n1p1);
+    plot(n2_n1p1);
+    plot(n1_n2p1);
+    plot(n2_n2p1);
+    legend("n1-n1p1","n2-n1p1","n1-n2p1","n2-n2p1");
+    
+    nexttile
+    hold on;
+    plot(n1_dn1);
+    plot(n2_dn1);
+    plot(n1_dn2);
+    plot(n2_dn2);
+    legend("n1-dn1","n2-dn1","n1-dn2","n2-dn2");
+    
+    nexttile
+    hold on;
+    plot(n1p1sq);
+    plot(n2p1sq);
+    legend("n1p1sq","n2p1sq");
+
+    nexttile
+    hold on;
+    plot(n1p1_dn1);
+    plot(n2p1_dn2);
+    legend("n1p1-dn1","n2p1-dn2"); 
+    %}
+
+    
+    
+    
+    %% plotting coefficient results, if desired
+    
+    if plotting
+        
+        a1 = abN(1,:);
+        a2 = abN(2,:);
+        b12 = abN(3,:);
+        b21 = abN(4,:);
+        N1 = abN(5,:);
+        N2 = abN(6,:);
+    
+        % plot for dataset 1
+        
+        tiledlayout("flow");
+        
+        nexttile
+        hold on;
+        plot(a1);
+        plot(b12);
+        plot(a1-b12);
+        legend("a1","b12","a1 - b12");
+        title(sprintf("2D coupled stability for 1) %s, coupled to 2) %s", obj1.data_name, obj2.data_name));
+        saveas(gcf, sprintf("coupling2d_%s_%s_%d-%d.jpeg", obj1.data_name, obj2.data_name, Y,M));
+
+        % plot for dataset 2
+        nexttile
+        hold on;
+        plot(a2);
+        plot(b21);
+        plot(a2-b21);
+        legend("a2","b21","a2 - b21");
+        title(sprintf("2D coupled stability for 2) %s, coupled to 1) %s",  obj2.data_name, obj1.data_name));
+        saveas(gcf, sprintf("coupling2d_%s_%s_%d-%d.jpeg", obj2.data_name, obj1.data_name, Y,M));
+        
+        % plot for noise quantities
+        nexttile
+        hold on;
+        plot(N1);
+        plot(N2);
+        legend("N1","N2");
+        title(sprintf("2D coupled noise for 2) %s, coupled to 1) %s",  obj2.data_name, obj1.data_name));
+
+
+    end
+    
+
+end
+

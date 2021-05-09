@@ -27,6 +27,10 @@ classdef DataSet
         X                   % array of X data
         Y                   % array of Y data
         
+        data_mean           % mean of dataset's Y data
+        datamat_x
+        datamat_y
+        
         
     end
     
@@ -41,14 +45,15 @@ classdef DataSet
             
             if mode == "vbl"
                 
-                obj.X = arg1;
-                obj.Y = arg2;
-                obj.data_res = floor(length(arg1));
-                obj.data_name = arg3;
+                obj.data_name = arg1;
+                obj.X = arg2;
+                obj.Y = arg3;
+                obj.data_res = floor(length(arg2));
+                obj.data_mean = mean(obj.Y);
                 
-                tag = "C:\Users\ndbke\Dropbox\_NDBK\Research\mftwdfa\";
+                tag = "C:\Users\ndbke\Dropbox\_NDBK\Research\thesis\";
 
-                base_folder = strcat(tag,"mftwdfa_code\");
+                base_folder = strcat(tag,"thesis_code\");
                 obj.data_subfolder = strcat(base_folder,"data\",obj.data_name,"\");
                 obj.figs_subfolder = strcat(base_folder,"figures\",obj.data_name,"\");
                 obj.figs_compare = strcat(base_folder,"figures\COMPARE\");
@@ -69,6 +74,7 @@ classdef DataSet
                 % Calculate the appropriate data resolution for the dataset
                 obj.data_res = opt_res(obj);
                 obj.time_gap = range(obj.X)/obj.data_res;
+                obj.data_mean = mean(obj.Y);
             
             end 
             

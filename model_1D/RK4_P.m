@@ -42,6 +42,10 @@ function P = RK4_P(Y,M,G,H,delt)
     P = double.empty(0,M*Y-1);
     
     pold = 1.0;
+    told = 0;
+    
+    P(1) = pold;
+    t_arr(1) = told;
     
 
 %% main loop
@@ -49,7 +53,7 @@ function P = RK4_P(Y,M,G,H,delt)
 
     % loop over months, since the months are the time domain in question for P(m)
     % run far into the future since P is periodic!
-    for m=1:200*M
+    for m=1:100*M-1
         
         % find the current & subsequent month indices
         m_mod = mod_1n(m,M);
@@ -66,8 +70,8 @@ function P = RK4_P(Y,M,G,H,delt)
         % fprintf(' %5d             %+1.4e\n', m, pnew);
           
         % store values in arrays for plotting
-        t_arr(m) = m;
-        P(m) = pnew;
+        t_arr(m+1) = m;
+        P(m+1) = pnew;
 
         % prepare for the next time through the loop
         pold = pnew;

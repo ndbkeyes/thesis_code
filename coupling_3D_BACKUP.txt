@@ -1,0 +1,422 @@
+function abN = coupling_3D(obj1,obj2,obj3,Y,M,br_win,plotting)
+%
+% FUNCTION: [a1, a2, b12, b21] = coupling_2D(obj1, obj2)
+%
+% PURPOSE: perform coupling analysis on the 2 inputted data sets
+%
+% INPUT: 
+% - obj1, obj2: DataSet objects holding the data sets we want to analyze coupling for
+%
+% OUTPUT:
+% - a1: stability of 1st set
+% - a2: stability of 2nd set
+% - b12: influence of 2nd set on 1st set
+% - b21: influence of 1st set on 2nd set
+%
+
+    if nargin == 5
+        br_win = 0;
+        plotting = 0;
+    elseif nargin == 6
+        plotting = 0;
+    end
+    
+
+    % get year/month averaged datasets
+    [~,n1_y,delt] = data2matrix(obj1,Y,M,br_win);
+    [~,n2_y,~] = data2matrix(obj2,Y,M,br_win);
+    [~,n3_y,~] = data2matrix(obj3,Y,M,br_win);
+    
+    
+    %% make empty arrays for all quantities
+    
+    % < n_{1,2,3}^2(t) >
+    AA = zeros(1,M);
+    BB = zeros(1,M);
+    CC = zeros(1,M);
+    % < n_{1,1,2}(t) n_{2,3,3}(t) >
+    AB = zeros(1,M);
+    AC = zeros(1,M);
+    BC = zeros(1,M);
+    
+    % < n_{1,2,3}(t) n_1(t + \Delta t) >
+    AAdt = zeros(1,M);
+    BAdt = zeros(1,M);
+    CAdt = zeros(1,M);
+    % < n_{1,2,3}(t) n_2(t + \Delta t) >
+    ABdt = zeros(1,M);
+    BBdt = zeros(1,M);
+    CBdt = zeros(1,M);
+    % < n_{1,2,3}(t) n_3(t + \Delta t) >
+    ACdt = zeros(1,M);
+    BCdt = zeros(1,M);
+    CCdt = zeros(1,M);
+    
+    
+    % < n_{1,2,3}(t) dn_1/dt >
+    ADA = zeros(1,M);
+    BDA = zeros(1,M);
+    CDA = zeros(1,M);
+    % < n_{1,2,3}(t) dn_2/dt >
+    ADB = zeros(1,M);
+    BDB = zeros(1,M);
+    CDB = zeros(1,M);
+    % < n_{1,2,3}(t) dn_3/dt >
+    ADC = zeros(1,M);
+    BDC = zeros(1,M);
+    CDC = zeros(1,M);
+    
+    % < n_{1,2,3}^2(t + \Delta t) >
+    n1p1sq = zeros(1,M);
+    n2p1sq = zeros(1,M);
+    n3p1sq = zeros(1,M);
+    % < n_{1,2,3}(t + \Delta t) dn_{1,2,3}/dt >
+    n1p1_dn1 = zeros(1,M);
+    n2p1_dn2 = zeros(1,M);
+    n3p1_dn3 = zeros(1,M);
+    
+    % a_{1,2,3}(t)
+    a1 = zeros(1,M);
+    a2 = zeros(1,M);
+    a3 = zeros(1,M);
+    % b_{12,13,21,23,31,32}(t)
+    b12 = zeros(1,M);
+    b13 = zeros(1,M);
+    b21 = zeros(1,M);
+    b23 = zeros(1,M);
+    b31 = zeros(1,M);
+    b32 = zeros(1,M);
+    % N_{1,2,3}(t)
+    N1 = zeros(1,M);
+    N2 = zeros(1,M);
+    N3 = zeros(1,M);
+
+    
+    
+    %%
+    
+    % loop thru months of data
+    for k=1:M
+        
+    %% get quantities to use in system
+        
+        %---- make base arrays ----%
+        if k == M
+            
+            n1 = n1_y(:,k);
+            n2 = n2_y(:,k);
+            n3 = n2_y(:,k);
+            n1p1 = circshift(n1_y(:,1),-1);
+            n2p1 = circshift(n2_y(:,1),-1);
+            n3p1 = circshift(n3_y(:,1),-1);
+            
+            % n_{1,2,3}(t)
+            n1 = n1(1:end-1);
+            n2 = n2(1:end-1);
+            n3 = n3(1:end-1);
+            % n_{1,2,3}(t + \delta t)
+            n1p1 = n1p1(1:end-1);
+            n2p1 = n2p1(1:end-1);
+            n3p1 = n3p1(1:end-1);
+            
+        else
+            % n_{1,2,3}(t)
+            n1 = n1_y(:,k);
+            n2 = n2_y(:,k);
+            n3 = n3_y(:,k);
+            % n_{1,2,3}(t + \delta t)
+            n1p1 = n1_y(:,k+1);
+            n2p1 = n2_y(:,k+1);
+            n3p1 = n3_y(:,k+1);
+        end
+        
+        
+        % < n_{1,2,3}^2(t) >
+        AA(k) = mean( n1 .^ 2 );
+        BB(k) = mean( n2 .^ 2 );
+        CC(k) = mean( n3 .^ 2 );
+        % < n_{1,1,2}(t) n_{2,3,3}(t) >
+        AB(k) = mean( n1 .* n2 );
+        AC(k) = mean( n1 .* n3 );
+        BC(k) = mean( n2 .* n3 );
+        
+        
+        
+        
+        %%% Q VECTOR QUANTITIES
+        
+
+        % < n_{1,2,3}(t) n_{1,2,3}(t + \delta t) >
+        AAdt(k) = mean( n1 .* n1p1 );
+        BAdt(k) = mean( n2 .* n1p1 );
+        CAdt(k) = mean( n3 .* n1p1 );
+        ABdt(k) = mean( n1 .* n2p1 );
+        BBdt(k) = mean( n2 .* n2p1 );
+        CBdt(k) = mean( n3 .* n2p1 );
+        ACdt(k) = mean( n1 .* n3p1 );
+        BCdt(k) = mean( n2 .* n3p1 );
+        CCdt(k) = mean( n3 .* n3p1 );
+        
+        
+        % < n_1(t) dn_1/dt >
+        ADA(k) = (1/delt) * ( AAdt(k) - AA(k) );
+        % < n_2(t) dn_1/dt >
+        BDA(k) = (1/delt) * ( BAdt(k) - AB(k) );
+        % < n_3(t) dn_1/dt >
+        CDA(k) = (1/delt) * ( CAdt(k) - AC(k) );
+                
+        % < n_1(t) dn_2/dt >
+        ADB(k) = (1/delt) * ( ABdt(k) - AB(k) );
+        % < n_2(t) dn_2/dt >
+        BDB(k) = (1/delt) * ( BBdt(k) - BB(k) );
+        % < n_3(t) dn_2/dt >
+        CDB(k) = (1/delt) * ( CBdt(k) - BC(k) );
+        
+        % < n_1(t) dn_3/dt >
+        ADC(k) = (1/delt) * ( ACdt(k) - AC(k) );
+        % < n_2(t) dn_3/dt >
+        BDC(k) = (1/delt) * ( BCdt(k) - BC(k) );
+        % < n_3(t) dn_3/dt >
+        CDC(k) = (1/delt) * ( CCdt(k) - CC(k) );
+        
+
+        
+        %%% N(k) QUANTITIES
+        
+        % < n1,2(t)^2 >
+        n1p1sq(k) = mean( n1p1 .* n1p1 );
+        n2p1sq(k) = mean( n2p1 .* n2p1 );
+        n3p1sq(k) = mean( n3p1 .* n3p1 );
+        
+        % < n1,2(t + \delta t) dn_1,2/dt >
+        n1p1_dn1(k) = (1/delt) * ( n1p1sq(k) - AAdt(k) );
+        n2p1_dn2(k) = (1/delt) * ( n2p1sq(k) - BBdt(k) );
+        n3p1_dn3(k) = (1/delt) * ( n3p1sq(k) - CCdt(k) );
+        
+        
+        
+        
+
+
+    %% solve system for a_{1,2,3} and b_{12,13,21,23,31,32}
+
+        % A matrices
+
+        A1 = zeros(3,3);
+        A1(1,1) = AA(k);
+        A1(1,2) = AB(k) - AA(k);
+        A1(1,3) = AC(k) - AA(k);
+        A1(2,1) = AB(k);
+        A1(2,2) = BB(k) - AB(k);
+        A1(2,3) = BC(k) - AB(k);
+        A1(3,1) = AC(k);
+        A1(3,2) = BC(k) - AC(k);
+        A1(3,3) = CC(k) - AC(k);
+
+        A2 = zeros(3,3);
+        A2(1,1) = AB(k);
+        A2(1,2) = AA(k) - AB(k);
+        A2(1,3) = AC(k) - AB(k);
+        A2(2,1) = BB(k);
+        A2(2,2) = AB(k) - BB(k);
+        A2(2,3) = BC(k) - BB(k);
+        A2(3,1) = BC(k);
+        A2(3,2) = AC(k) - BC(k);
+        A2(3,3) = CC(k) - BC(k);
+
+        A3 = zeros(3,3);
+        A3(1,1) = AC(k);
+        A3(1,2) = AA(k) - AC(k);
+        A3(1,3) = AB(k) - AC(k);
+        A3(2,1) = BC(k);
+        A3(2,2) = AB(k) - BC(k);
+        A3(2,3) = BB(k) - BC(k);
+        A3(3,1) = CC(k);
+        A3(3,2) = AC(k) - CC(k);
+        A3(3,3) = BC(k) - CC(k);
+        
+        
+
+        % Q vectors
+
+        Q1 = zeros(3,1);
+        Q1(1,1) = ADA(k);
+        Q1(2,1) = BDA(k);
+        Q1(3,1) = CDA(k);
+
+        Q2 = zeros(3,1);
+        Q2(1,1) = ADB(k);
+        Q2(2,1) = BDB(k);
+        Q2(3,1) = CDB(k);
+
+        Q3 = zeros(3,1);
+        Q3(1,1) = ADC(k);
+        Q3(2,1) = BDC(k);
+        Q3(3,1) = CDC(k);
+
+
+        % X vectors
+
+        X1 = A1\Q1;
+        X2 = A2\Q2;
+        X3 = A3\Q3;
+
+
+        % unpack results
+
+        % 1: co2
+        % 2: ch4
+        % 3: temp.
+
+        % (1) co2 local stability
+        a1(k) = X1(1,1);
+        % ch4 -> co2 influence
+        b12(k) = X1(2,1);
+        % temp. -> co2 influence
+        b13(k) = X1(3,1);
+
+
+        % ch4 local stability
+        a2(k) = X2(1,1);
+        % co2 -> ch4 influence
+        b21(k) = X2(2,1);
+        % temp. -> ch4 influence
+        b23(k) = X2(3,1);
+
+
+        % temp. local stability
+        a3(k) = X3(1,1);
+        % co2 -> temp. influence
+        b31(k) = X3(2,1);
+        % ch4 -> temp. influence
+        b32(k) = X3(3,1);
+
+
+        % fprintf("a1 = %.3e, b12 = %.3e, b13 = %.3e\n", a1, b12, b13);
+
+        % fprintf("a1,2 = %.3e, %.3e\nb12,21 = %.3e, %.3e\n", a1, a2, b12, b21);
+        
+        
+        
+    %% derive N_{1,2,3}
+    
+        N1_sq = n1p1_dn1(k) - a1(k) * AAdt(k) - b12(k) * (BAdt(k) - AAdt(k)) - b13(k) * (CAdt(k) - AAdt(k));
+        N2_sq = n2p1_dn2(k) - a2(k) * BBdt(k) - b21(k) * (ABdt(k) - BBdt(k)) - b23(k) * (CBdt(k) - BBdt(k));
+        N3_sq = n3p1_dn3(k) - a3(k) * CCdt(k) - b31(k) * (ACdt(k) - CCdt(k)) - b32(k) * (BCdt(k) - CCdt(k));
+        
+        if N1_sq < 0
+            N1(k) = 0;
+        else
+            N1(k) = sqrt(N1_sq);
+        end
+        
+        if N2_sq < 0
+            N2(k) = 0;
+        else
+            N2(k) = sqrt(N2_sq);
+        end
+        
+        if N3_sq < 0
+            N3(k) = 0;
+        else
+            N3(k) = sqrt(N3_sq);
+        end
+
+    end
+    
+%     a1 = a1 - 5*10^(-4);
+%     b12 = b12 - 5*10^(-4);
+%     b13 = b13 - 5*10^(-4);
+%     
+%     
+%     a2 = a2 - 2*10^(-2);
+%     b21 = b21 - 7*10^(-3);
+%     b23 = b23 - 4*10^(-3);
+%     
+%     
+%     a3 = a3 - 5*10^(-4);
+%     b31 = b31 - 5*10^(-4);
+%     b32 = b32 - 5*10^(-4);
+
+    
+    
+    % package coefficients into return array
+    abN = [a1; a2; a3; b12; b13; b21; b23; b31; b32; N1; N2; N3];
+%     % smooth the parameters by movmean
+%     win = ceil(M/4);           % size of window to average
+%     abN = movmean(abN,win,2);   % use dim=2 to do moving avg along rows     
+    
+    abN = smoothdata(abN',"Gaussian",10);
+    abN = abN';
+    
+    %% plotting everything, if desired
+    
+    if plotting
+        
+        a1 = abN(1,:);
+        a2 = abN(2,:);
+        a3 = abN(3,:);
+        b12 = abN(4,:);
+        b13 = abN(5,:);
+        b21 = abN(6,:);
+        b23 = abN(7,:);
+        b31 = abN(8,:);
+        b32 = abN(9,:);
+        N1 = abN(10,:);
+        N2 = abN(11,:);
+        N3 = abN(12,:);
+        
+        
+        close all;
+        tiledlayout("flow");
+        months = 1:M;
+    
+        % plot for dataset 1
+        nexttile
+        hold on;
+        plot(months,a1);
+        plot(months,b12);
+        plot(months,b13);
+        plot(months,a1-b12-b13);
+        legend("a_1","b_{12}","b_{13}","a_1 - b_{12} - b_{13}");
+        title(sprintf("3D coupling: 1) %s, coupled to 2) %s, 3) %s", obj1.data_name, obj2.data_name, obj3.data_name));
+        saveas(gcf, sprintf("coupling3d_%s_%d-%d.jpeg", obj1.data_name, Y,M));
+
+        % plot for dataset 2
+        nexttile
+        hold on;
+        plot(months,a2);
+        plot(months,b21);
+        plot(months,b23);
+        plot(months,a2-b21-b23);
+        legend("a_2","b_{21}","b_{23}","a_2 - b_{21} - b_{23}");
+        title(sprintf("3D coupling: 2) %s, coupled to 1) %s, 3) %s", obj2.data_name, obj1.data_name, obj3.data_name));
+        saveas(gcf, sprintf("coupling3d_%s_%d-%d.jpeg", obj2.data_name, Y,M));
+        
+        
+        % plot for dataset 3
+        nexttile
+        hold on;
+        plot(months,a3);
+        plot(months,b31);
+        plot(months,b32);
+        plot(months,a3-b31-b32);
+        legend("a_{3}","b_{31}","b_{32}","a_3 - b_{31} - b_{32}");
+        title(sprintf("3D coupling:  3) %s, coupled to 1) %s, 2) %s", obj3.data_name, obj1.data_name, obj2.data_name));
+        saveas(gcf, sprintf("coupling3d_%s_%d-%d.jpeg", obj3.data_name, Y,M));
+        
+        
+        % plot noise intensities
+        nexttile
+        hold on;
+        plot(months,N1);
+        plot(months,N2);
+        plot(months,N3);
+        legend("N_1","N_2","N_3");
+        title("3D noise intensities");
+        saveas(gcf, sprintf("coupling3d_noise_%d-%d.jpeg", Y,M));
+        
+        
+    end
+
+end
