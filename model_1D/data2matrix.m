@@ -1,4 +1,4 @@
-function [matrix_x,matrix_y,delt] = data2matrix(obj,Y,M,br_win)
+function [matrix_x,matrix_y,delt] = data2matrix(obj)
 %
 % FUNCTION: data2matrix(obj,Y,M)
 %
@@ -22,6 +22,10 @@ function [matrix_x,matrix_y,delt] = data2matrix(obj,Y,M,br_win)
     end
     
     
+    Y = obj.yr;
+    M = obj.mo;
+    br_win = obj.bw;
+    
     % interpolate unique-avged data to standard range
     
     [X_unique, Y_unique] = unique_avged(obj);
@@ -32,11 +36,10 @@ function [matrix_x,matrix_y,delt] = data2matrix(obj,Y,M,br_win)
     % get data range and lengths of years & months
     delt = range(xx) / (Y*M);
     
-    
     if br_win ~= 0
         yy = yy - movmean(yy,br_win);
     else
-        yy = yy - obj.data_mean;
+        yy = yy - mean(yy);
     end
     
     

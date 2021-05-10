@@ -167,47 +167,45 @@ function [sim_x, sim_n1, sim_n2, sim_n3] = epica_sim3D_REDO(obj1,obj2,obj3,Y,M,a
         ymax = 1.1 * max([max(abs(data_y1)),max(abs(data_y2))]);
 
 
-        tiledlayout("flow");
+        tiledlayout(2,3);
 
         nexttile
         plot(data_x1,data_y1,'Color','blue');
         xlim([-8*10^5,0]);
         ylim([-ymax, ymax]);
-        title(sprintf("%s data",obj1.data_name));
-
-        nexttile
-        plot(sim_x,sim_n1,'Color','red');   
-        xlim([-8*10^5,0]);
-        ylim([-ymax, ymax]);
-        title(sprintf("%s simulation",obj1.data_name));
-        
-        
+%         title(sprintf("%s data",obj1.data_name));
         
         nexttile
         plot(data_x2,data_y2,'Color','blue');
         xlim([-8*10^5,0]);
         ylim([-ymax, ymax]);
-        title(sprintf("%s data",obj2.data_name));
-        
-        nexttile
-        plot(sim_x,sim_n2,'Color','red'); 
-        xlim([-8*10^5,0]);
-        ylim([-ymax, ymax]);
-        title(sprintf("%s simulation",obj2.data_name));
-        
-        
-        
+%         title(sprintf("%s data",obj2.data_name));
+                
         nexttile
         plot(data_x3,data_y3,'Color','blue');
         xlim([-8*10^5,0]);
         ylim([-ymax, ymax]);
-        title(sprintf("%s data",obj3.data_name));
+%         title(sprintf("%s data",obj3.data_name));
+
+        
+        
+        nexttile
+        plot(sim_x,sim_n1,'Color','red');   
+        xlim([-8*10^5,0]);
+        ylim([-ymax, ymax]);
+%         title(sprintf("%s simulation",obj1.data_name));
+    
+        nexttile
+        plot(sim_x,sim_n2,'Color','red'); 
+        xlim([-8*10^5,0]);
+        ylim([-ymax, ymax]);
+%         title(sprintf("%s simulation",obj2.data_name));
         
         nexttile
         plot(sim_x,sim_n3,'Color','red'); 
         xlim([-8*10^5,0]);
         ylim([-ymax, ymax]);
-        title(sprintf("%s simulation",obj3.data_name));
+%         title(sprintf("%s simulation",obj3.data_name));
     
     end
     

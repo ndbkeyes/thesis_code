@@ -30,6 +30,12 @@ classdef DataSet
         data_mean           % mean of dataset's Y data
         datamat_x
         datamat_y
+        x_arr
+        y_arr
+        
+        yr
+        mo
+        bw
         
         
     end
@@ -41,15 +47,43 @@ classdef DataSet
         
         %%% DATASET CLASS CONSTRUCTOR
         
-        function obj = DataSet(mode, arg1, arg2, arg3)
+        function obj = DataSet(varargin)
             
-            if mode == "vbl"
+            
+            %% parse input
+            
+            p = inputParser;
+
+            % both VBL & DATA
+            addRequired(p,'mode');
+            
+            addOptional(p,'dn','');
+            addOptional(p,'yr',1);
+            addOptional(p,'mo',1);
+            addOptional(p,'bw',0);
+
+            % VBL MODE
+            addOptional(p,'X',0);
+            addOptional(p,'Y',0);
+            
+            % DATA MODE
+            addOptional(p,'ui','');
+            
+
+            % parse optional args
+            parse(p,varargin{:});
+            opt = p.Results;
+            
+            
+            %% VBL MODE
+            
+            if opt.mode == "vbl"
                 
-                obj.data_name = arg1;
-                obj.X = arg2;
-                obj.Y = arg3;
-                obj.data_res = floor(length(arg2));
-                obj.data_mean = mean(obj.Y);
+                obj.data_name = opt.dn;
+                obj.X = opt.X;
+                obj.Y = opt.Y;
+                obj.data_res = floor(length(obj.X));
+                
                 
                 tag = "C:\Users\ndbke\Dropbox\_NDBK\Research\thesis\";
 
@@ -57,14 +91,30 @@ classdef DataSet
                 obj.data_subfolder = strcat(base_folder,"data\",obj.data_name,"\");
                 obj.figs_subfolder = strcat(base_folder,"figures\",obj.data_name,"\");
                 obj.figs_compare = strcat(base_folder,"figures\COMPARE\");
+                
+                % give object Y, M, br_win values
+                obj.yr = opt.yr;
+                obj.mo = opt.mo;
+                obj.bw = opt.bw;
+                
+                % give object its own data as Y x M matrix
+                [obj.datamat_x, obj.datamat_y] = data2matrix(obj);
+                
+                % THIS IS THE FLATTENED VERSION OF THE Y,M MATRIX
+                obj.x_arr = reshape(obj.datamat_x',[],1);
+                obj.y_arr = reshape(obj.datamat_y',[],1);
+                
 
                 
-            elseif mode == "data"
+
+                
+            %% DATA MODE
+            
+            elseif opt.mode == "data"
             
                 % Assign user ID and dataset name
-                obj.user_id = arg1;
-                obj.data_name = arg2;
-                obj.normed = 0;
+                obj.user_id = opt.ui;
+                obj.data_name = opt.dn;
 
                 % Load in data set's parameters
                 [obj.filepath_in, obj.data_subfolder, obj.figs_subfolder, obj.figs_compare, obj.varnames, obj.cutoff, obj.t_scale, obj.bounds_lhs, obj.bounds_rhs] = set_params(obj);
@@ -74,7 +124,19 @@ classdef DataSet
                 % Calculate the appropriate data resolution for the dataset
                 obj.data_res = opt_res(obj);
                 obj.time_gap = range(obj.X)/obj.data_res;
-                obj.data_mean = mean(obj.Y);
+                % obj.data_mean = mean(obj.Y);
+                
+                % Make data into matrix by Y,M
+                obj.yr = opt.yr;
+                obj.mo = opt.mo;
+                obj.bw = opt.bw;
+                
+                [obj.datamat_x, obj.datamat_y] = data2matrix(obj);
+                
+                % THIS IS THE FLATTENED VERSION OF THE Y,M MATRIX
+                obj.x_arr = reshape(obj.datamat_x',[],1);
+                obj.y_arr = reshape(obj.datamat_y',[],1);
+                
             
             end 
             

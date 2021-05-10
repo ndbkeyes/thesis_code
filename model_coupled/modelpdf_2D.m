@@ -152,7 +152,7 @@ function modelpdf_2D(obj1,obj2,Y,M,sim_n1_sample,sim_n2_sample,br_win)
     %% plot real, average-simulated, and Gaussian PDFs
     figure(3);
     hold on;
-    h1 = plot(xi,pdf_data1,'Color','black','LineWidth',1.5);
+    h1 = plot(xi,pdf_data1,'Color','blue','LineWidth',1.5);
     h2 = plot(xi,pdf_avgsim1,'Color','red','LineWidth',1.5);
     h3 = plot(xi,ynorm1,'Color','blue');
     legend([h1 h2 h3], "data PDF","average simulated PDF","Gaussian PDF");
@@ -161,7 +161,7 @@ function modelpdf_2D(obj1,obj2,Y,M,sim_n1_sample,sim_n2_sample,br_win)
     
     figure(4);
     hold on;
-    h1 = plot(xi,pdf_data2,'Color','black','LineWidth',1.5);
+    h1 = plot(xi,pdf_data2,'Color','blue','LineWidth',1.5);
     h2 = plot(xi,pdf_avgsim2,'Color','red','LineWidth',1.5);
     h3 = plot(xi,ynorm2,'Color','blue');
     legend([h1 h2 h3], "data PDF","average simulated PDF","Gaussian PDF");
@@ -179,7 +179,7 @@ function modelpdf_2D(obj1,obj2,Y,M,sim_n1_sample,sim_n2_sample,br_win)
     nexttile
     hold on;
     [means_pdf_data1, xi_pdf1] = ksdensity(means_data1);
-    plot(xi_pdf1,means_pdf_data1,'Color','black');
+    plot(xi_pdf1,means_pdf_data1,'Color','blue');
     [means_pdf_sim1, xi_pdf1] = ksdensity(means_sim1);
     plot(xi_pdf1,means_pdf_sim1,'Color','red');
     title("Distributions of means");
@@ -188,7 +188,7 @@ function modelpdf_2D(obj1,obj2,Y,M,sim_n1_sample,sim_n2_sample,br_win)
     nexttile
     hold on;
     [stds_pdf_data1, xi_pdf1] = ksdensity(stds_data1);
-    plot(xi_pdf1,stds_pdf_data1,'Color','black');
+    plot(xi_pdf1,stds_pdf_data1,'Color','blue');
     [stds_pdf_sim1, xi_pdf1] = ksdensity(stds_sim1);
     plot(xi_pdf1,stds_pdf_sim1,'Color','red');
     title("Distributions of standard deviations");
@@ -197,7 +197,7 @@ function modelpdf_2D(obj1,obj2,Y,M,sim_n1_sample,sim_n2_sample,br_win)
     nexttile
     hold on;
     [skews_pdf_data1, xi_pdf1] = ksdensity(skews_data1);
-    plot(xi_pdf1,skews_pdf_data1,'Color','black');
+    plot(xi_pdf1,skews_pdf_data1,'Color','blue');
     [skews_pdf_sim1, xi_pdf1] = ksdensity(skews_sim1);
     plot(xi_pdf1,skews_pdf_sim1,'Color','red');
     title("Distributions of skewnesses");
@@ -215,7 +215,7 @@ function modelpdf_2D(obj1,obj2,Y,M,sim_n1_sample,sim_n2_sample,br_win)
     nexttile
     hold on;
     [means_pdf_data2, xi_pdf2] = ksdensity(means_data2);
-    plot(xi_pdf2,means_pdf_data2,'Color','black');
+    plot(xi_pdf2,means_pdf_data2,'Color','blue');
     [means_pdf_sim2, xi_pdf2] = ksdensity(means_sim2);
     plot(xi_pdf2,means_pdf_sim2,'Color','red');
     title("Distributions of means");
@@ -224,7 +224,7 @@ function modelpdf_2D(obj1,obj2,Y,M,sim_n1_sample,sim_n2_sample,br_win)
     nexttile
     hold on;
     [stds_pdf_data2, xi_pdf2] = ksdensity(stds_data2);
-    plot(xi_pdf2,stds_pdf_data2,'Color','black');
+    plot(xi_pdf2,stds_pdf_data2,'Color','blue');
     [stds_pdf_sim2, xi_pdf2] = ksdensity(stds_sim2);
     plot(xi_pdf2,stds_pdf_sim2,'Color','red');
     title("Distributions of standard deviations");
@@ -233,7 +233,7 @@ function modelpdf_2D(obj1,obj2,Y,M,sim_n1_sample,sim_n2_sample,br_win)
     nexttile
     hold on;
     [skews_pdf_data2, xi_pdf2] = ksdensity(skews_data2);
-    plot(xi_pdf2,skews_pdf_data2,'Color','black');
+    plot(xi_pdf2,skews_pdf_data2,'Color','blue');
     [skews_pdf_sim2, xi_pdf2] = ksdensity(skews_sim2);
     plot(xi_pdf2,skews_pdf_sim2,'Color','red');
     title("Distributions of skewnesses");

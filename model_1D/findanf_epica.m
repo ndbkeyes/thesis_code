@@ -1,4 +1,4 @@
-function anf = findanf_epica(obj,Y,M,varargin)
+function anf = findanf_epica(obj,varargin)
 % 
 % FUNCTION: findanf_epica(obj)
 %
@@ -27,23 +27,37 @@ function anf = findanf_epica(obj,Y,M,varargin)
     p = inputParser;
     
     addRequired(p,'obj');
-    addRequired(p,'Y');
-    addRequired(p,'M');
     
     addOptional(p,'mm',2);
     addOptional(p,'plt',0);
-    addOptional(p,'br_win',0);
+%     addOptional(p,'br_win',0);
     addOptional(p,'est',0);
     
-    parse(p,obj,Y,M,varargin{:});
+    parse(p,obj,varargin{:});
     opt = p.Results;
+   
+    
+    
+    
+    global delt
 
     
     
     %% convert raw data to (year,month) averaged matrix   
     
-    [x,data,delt] = data2matrix(obj,Y,M,opt.br_win);
+    %[x,data,delt] = data2matrix(obj,Y,M,opt.br_win);
     
+    
+    % get correct Y, M, br_win from object itself since it's stored there!
+    obj = opt.obj;
+    Y = obj.yr;
+    M = obj.mo;
+    br_win = obj.bw;
+    
+    
+    x = obj.datamat_x;
+    data = obj.datamat_y;
+
     
     
     
@@ -222,7 +236,7 @@ function anf = findanf_epica(obj,Y,M,varargin)
         end
         
     
-        if opt.br_win ~= 0
+        if br_win ~= 0
             f = zeros(1,Y);
         end
         
@@ -377,13 +391,10 @@ function anf = findanf_epica(obj,Y,M,varargin)
         
         %% set return values
         
-        a = a_est;
-        N = N_est;
-        f = zeros(1,Y);
-        
         % smooth and package returned coefficients
-        a = smooth_periodic(a,M/2);
-        N = smooth_periodic(N,M/2);
+        a = smooth_periodic(a_est,M/2);
+        N = smooth_periodic(N_est,M/2);
+        f = zeros(1,Y);
         anf = {a;N;f};
         
        

@@ -1,4 +1,4 @@
-function [sim_x, sim_n] = epica_sim1D(obj,Y,M,anf,br_win,plotting)
+function [sim_x, sim_n] = epica_sim1D(obj,anf,plotting)
 %
 % FUNCTION: epica_sim(obj,Y,M,m)
 %
@@ -20,11 +20,14 @@ function [sim_x, sim_n] = epica_sim1D(obj,Y,M,anf,br_win,plotting)
     %% default to not removing backbone 
 
     if nargin == 4
-        br_win = 0;
-        plotting = 0;
-    elseif nargin == 5
         plotting = 0;
     end
+    
+    
+    % get Y, M from object itself
+    Y = obj.yr;
+    M = obj.mo;
+
         
     
     %% make variables for loop
@@ -40,12 +43,12 @@ function [sim_x, sim_n] = epica_sim1D(obj,Y,M,anf,br_win,plotting)
     %% set initial value of simulation
     
     % background-removed case
-    if br_win ~= 0
+    if obj.bw ~= 0
         sim_n(1) = 0;
         
     % regular case
     else
-        sim_n(1) = obj.Y(1) - obj.data_mean;
+        sim_n(1) = obj.y_arr(1) - mean(obj.y_arr);
     end
     
     
@@ -73,9 +76,12 @@ function [sim_x, sim_n] = epica_sim1D(obj,Y,M,anf,br_win,plotting)
     if plotting
         
         % unpack data into arrays
-        [matrix_x,matrix_y,~] = data2matrix(obj,Y,M,br_win);
-        data_x = reshape(matrix_x',1,[]);
-        data_y = reshape(matrix_y',1,[]);
+%         [matrix_x,matrix_y,~] = data2matrix(obj,Y,M,br_win);
+%         data_x = reshape(matrix_x',1,[]);
+%         data_y = reshape(matrix_y',1,[]);
+
+        data_x = reshape(obj.datamat_x',[],1);
+        data_y = reshape(obj.datamat_y',[],1);
 
         % get proper y limits for plot
         ymax = max(max(abs(data_y)),max(abs(sim_n)));

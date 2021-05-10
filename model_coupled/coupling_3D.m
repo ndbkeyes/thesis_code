@@ -28,6 +28,10 @@ function abN = coupling_3D_REDO(obj1,obj2,obj3,Y,M,br_win,plotting)
     [~,n2_y,~] = data2matrix(obj2,Y,M,br_win);
     [~,n3_y,~] = data2matrix(obj3,Y,M,br_win);
     
+    n1_y = obj1.datamat_y;
+    n2_y = obj2.datamat_y;
+    n3_y = obj3.datamat_y;
+    
 
 %     close all;
 %     figure(1);
@@ -296,6 +300,11 @@ function abN = coupling_3D_REDO(obj1,obj2,obj3,Y,M,br_win,plotting)
         legend("a3","b31","b32","a3 - b31 - b32");
         title(sprintf("3D coupled stability for 3) %s, coupled to 1) %s",  obj2.data_name, obj1.data_name));
         saveas(gcf, sprintf("coupling2d_%s_%s_%d-%d.jpeg", obj2.data_name, obj1.data_name, Y,M));
+        
+        
+        %         [0.1 0 0.1]
+%         'magenta'
+%         [0.6,0,0.6]
         
         
         % plot for noise quantities
