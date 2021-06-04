@@ -179,7 +179,7 @@ function [sim_x, sim_n1, sim_n2, sim_n3] = epica_sim3D_REDO(obj1,obj2,obj3,Y,M,a
         plot(sim_x,sim_n1,'Color','red');   
         xlim([-8*10^5,0]);
         ylim([-ymax, ymax]);
-        title(sprintf("%s simulation",obj1.data_name));
+        title(sprintf("%s simulation - 3D model",obj1.data_name));
         
         
         
@@ -193,7 +193,7 @@ function [sim_x, sim_n1, sim_n2, sim_n3] = epica_sim3D_REDO(obj1,obj2,obj3,Y,M,a
         plot(sim_x,sim_n2,'Color','red'); 
         xlim([-8*10^5,0]);
         ylim([-ymax, ymax]);
-        title(sprintf("%s simulation",obj2.data_name));
+        title(sprintf("%s simulation - 3D model",obj2.data_name));
         
         
         
@@ -207,7 +207,7 @@ function [sim_x, sim_n1, sim_n2, sim_n3] = epica_sim3D_REDO(obj1,obj2,obj3,Y,M,a
         plot(sim_x,sim_n3,'Color','red'); 
         xlim([-8*10^5,0]);
         ylim([-ymax, ymax]);
-        title(sprintf("%s simulation",obj3.data_name));
+        title(sprintf("%s simulation - 3D model",obj3.data_name));
     
     end
     

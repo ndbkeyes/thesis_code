@@ -264,49 +264,50 @@ function abN = coupling_3D_REDO(obj1,obj2,obj3,Y,M,br_win,plotting)
         
         nexttile
         hold on;
-        plot(a1);
-        plot(b12);
-        plot(b13);
-        plot(a1-b12-b13);
+        plot(a1,'LineWidth',1.2,'Color',[0.4 0.2 0]);
+        plot(b12,'--','LineWidth',1.2,'Color',[0.9 0.6 0]);
+        plot(b13,':','LineWidth',1.2,'Color',[0.9 0.6 0]);
+        plot(a1-b12-b13,'LineWidth',2,'Color',[0.8,0.5,0]);
         xlim([1,M]);
-        legend("a1","b12","a1 - b12 - b13");
-        title(sprintf("3D coupled stability for 1) %s, coupled to 2) %s", obj1.data_name, obj2.data_name));
+        legend("a1","b12","b13","a1 - b12 - b13");
+        title(sprintf("3D coupled stability for 1) %s", obj1.data_name));
         %saveas(gcf, sprintf("coupling2d_%s_%s_%d-%d.jpeg", obj1.data_name, obj2.data_name, Y,M));
 
         % plot for dataset 2
         nexttile
         hold on;
-        plot(a2);
-        plot(b21);
-        plot(b23);
-        plot(a2-b21-b23);
+        plot(a2,'LineWidth',1.2,'Color',[0 0.3 0]);
+        plot(b21,'--','LineWidth',1.2,'Color',[0.5 0.8 0.5]);
+        plot(b23,':','LineWidth',1.2,'Color',[0.5 0.8 0.5]);
+        plot(a2-b21-b23,'LineWidth',2,'Color',[0 0.7 0]);
         xlim([1,M]);
         legend("a2","b21","b23","a2 - b21 - b23");
-        title(sprintf("3D coupled stability for 2) %s, coupled to 1) %s",  obj2.data_name, obj1.data_name));
-        saveas(gcf, sprintf("coupling2d_%s_%s_%d-%d.jpeg", obj2.data_name, obj1.data_name, Y,M));
+        title(sprintf("3D coupled stability for 2) %s",  obj2.data_name));
+%         saveas(gcf, sprintf("coupling2d_%s_%s_%d-%d.jpeg", obj2.data_name, obj1.data_name, Y,M));
         
         % plot for dataset 3
         nexttile
         hold on;
-        plot(a3);
-        plot(b31);
-        plot(b32);
-        plot(a3-b31-b32);
+        plot(a3,'LineWidth',1.2,'Color',[0.1 0 0.1]);
+        plot(b31,'--','LineWidth',1.2,'Color','magenta');
+        plot(b32,':','LineWidth',1.2,'Color','magenta');
+        plot(a3-b31-b32,'LineWidth',2,'Color',[0.6,0,0.6]);
         xlim([1,M]);
         legend("a3","b31","b32","a3 - b31 - b32");
-        title(sprintf("3D coupled stability for 3) %s, coupled to 1) %s",  obj2.data_name, obj1.data_name));
-        saveas(gcf, sprintf("coupling2d_%s_%s_%d-%d.jpeg", obj2.data_name, obj1.data_name, Y,M));
+        title(sprintf("3D coupled stability for 3) %s",  obj3.data_name));
+%         saveas(gcf, sprintf("coupling2d_%s_%s_%d-%d.jpeg", obj2.data_name, obj1.data_name, Y,M));
         
         
         % plot for noise quantities
         nexttile
         hold on;
-        plot(N1);
-        plot(N2);
-        plot(N3);
+        plot(N1,'LineWidth',1.1,'Color',[0.9 0.5 0]);
+        plot(N2,'LineWidth',1.1,'Color',[0 0.7 0]);
+        plot(N3,'LineWidth',1.1,'Color',[0.6,0,0.6]);
         xlim([1,M]);
+        ylim([0,max([max(N1),max(N2),max(N3)])]);
         legend("N1","N2","N3");
-        title(sprintf("3D coupled noise"));
+        title("3D coupled noise");
 
 
     end

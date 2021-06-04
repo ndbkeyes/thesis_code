@@ -1,4 +1,4 @@
-function modelpdf_1D(obj,Y,M,sim_n_sample,br_win)
+function modelpdf_1D(obj,Y,M,m,sim_n_sample,br_win)
 
     close all;
     hold on;
@@ -19,27 +19,21 @@ function modelpdf_1D(obj,Y,M,sim_n_sample,br_win)
     
     figure(1);
     hold on;
-    plot(xi,pdf_data,'Color','black','LineWidth',1.5);
+    plot(xi,pdf_data,'Color','blue','LineWidth',1.5);
     plot(xi,pdf_sim,'Color','red','LineWidth',1.5);
-    title("PDFs of data & sample simulation");
-    legend("data PDF","sample simulation PDF");    
+    title(sprintf("PDF comparison - %s, 1D model",obj.data_name));
+    legend("data PDF","simulation PDF");    
     
     
     % get 1D model coefficients
-    anf = findanf_epica(obj,Y,M,'br_win',br_win);
+    anf = findanf_epica(obj,Y,M,'br_win',br_win,'mm',m);
     
     
     % number of model runs
-    n_runs = 500;
+    n_runs = 200;
     
-    % empty arrays for loop quantities
     pdf_avgsim = zeros(1,length(xi));
-    means_sim = zeros(1,n_runs);
-    stds_sim = zeros(1,n_runs);
-    skews_sim = zeros(1,n_runs);
-    means_data = zeros(1,n_runs);
-    stds_data = zeros(1,n_runs);
-    skews_data = zeros(1,n_runs);
+    
 
     
     %% run simulation multiple times and get & plot PDFs and summary stats
@@ -88,14 +82,11 @@ function modelpdf_1D(obj,Y,M,sim_n_sample,br_win)
     std_data = std(data_y);
     skew_data = skewness(data_y);
     
-    
-%     mean_avgsim = mean(pdf_avgsim);
-%     std_avgsim = std(pdf_avgsim);
-    skew_avgsim = skewness(pdf_avgsim);
+
     
     mean_avgsim = sum(xi .* pdf_avgsim);
     std_avgsim = sqrt( sum( pdf_data .* (xi - mean_avgsim).^2 ) );
-    % skew_avgsim = skewness(pdf_avgsim);
+    skew_avgsim = skewness(pdf_avgsim);
     
     % print comparison of summary stats
     fprintf("\tdata summary stats\tavgsim summary stats\nmean:\t\t%.3f\t\t\t%.3f\nstd:\t\t%.3f\t\t\t%.3f\nskew:\t\t%.3f\t\t\t%.3f\n",mean_data,mean_avgsim,std_data,std_avgsim,skew_data,skew_avgsim);
@@ -131,7 +122,7 @@ function modelpdf_1D(obj,Y,M,sim_n_sample,br_win)
     nexttile
     hold on;
     [stds_pdf_data, xi_pdf] = ksdensity(stds_data);
-    plot(xi_pdf,stds_pdf_data,'Color','black');
+    plot(xi_pdf,stds_pdf_data,'Color','blue');
     [stds_pdf_sim, xi_pdf] = ksdensity(stds_sim);
     plot(xi_pdf,stds_pdf_sim,'Color','red');
     title("Distributions of standard deviations");
@@ -141,7 +132,7 @@ function modelpdf_1D(obj,Y,M,sim_n_sample,br_win)
     nexttile
     hold on;
     [skews_pdf_data, xi_pdf] = ksdensity(skews_data);
-    plot(xi_pdf,skews_pdf_data,'Color','black');
+    plot(xi_pdf,skews_pdf_data,'Color','blue');
     [skews_pdf_sim, xi_pdf] = ksdensity(skews_sim);
     plot(xi_pdf,skews_pdf_sim,'Color','red');
     title("Distributions of skewnesses");

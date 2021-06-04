@@ -53,7 +53,7 @@ function P = RK4_P(Y,M,G,H,delt)
 
     % loop over months, since the months are the time domain in question for P(m)
     % run far into the future since P is periodic!
-    for m=1:100*M-1
+    for m=1:1000*M-1
         
         % find the current & subsequent month indices
         m_mod = mod_1n(m,M);

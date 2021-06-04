@@ -74,23 +74,27 @@ function [sim_x, sim_n] = epica_sim1D(obj,Y,M,anf,br_win,plotting)
         
         % unpack data into arrays
         [matrix_x,matrix_y,~] = data2matrix(obj,Y,M,br_win);
-        data_x = reshape(matrix_x',1,[]);
-        data_y = reshape(matrix_y',1,[]);
+        data_x = reshape(matrix_x',[],1);
+        data_y = reshape(matrix_y',[],1);
 
         % get proper y limits for plot
         ymax = max(max(abs(data_y)),max(abs(sim_n)));
 
         tiledlayout("flow");
+        
         % plot data
         nexttile
         plot(data_x,data_y,'Color','blue');
         xlim([-8*10^5,0]);
         ylim([-ymax, ymax]);
+        title(sprintf("%s data\n",obj.data_name));
+        
         % plot simulation
         nexttile
         plot(sim_x,sim_n,'Color','red');   
         xlim([-8*10^5,0]);
         ylim([-ymax, ymax]);
+        title(sprintf("%s simulation - 1D model\n",obj.data_name));
         
     end
     

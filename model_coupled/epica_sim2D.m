@@ -162,7 +162,7 @@ function [sim_x, sim_n1, sim_n2] = epica_sim2D(obj1,obj2,Y,M,abN,br_win,plotting
         plot(sim_x,sim_n1,'Color','red');   
         xlim([-8*10^5,0]);
         ylim([-ymax, ymax]);
-        title(sprintf("%s simulation",obj1.data_name));
+        title(sprintf("%s simulation - 2D model",obj1.data_name));
         
         nexttile
         plot(data_x2,data_y2,'Color','blue');
@@ -174,7 +174,7 @@ function [sim_x, sim_n1, sim_n2] = epica_sim2D(obj1,obj2,Y,M,abN,br_win,plotting
         plot(sim_x,sim_n2,'Color','red'); 
         xlim([-8*10^5,0]);
         ylim([-ymax, ymax]);
-        title(sprintf("%s simulation",obj2.data_name));
+        title(sprintf("%s simulation - 2D model",obj2.data_name));
     
     end
     

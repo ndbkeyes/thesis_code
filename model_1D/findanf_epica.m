@@ -42,8 +42,7 @@ function anf = findanf_epica(obj,Y,M,varargin)
     
     %% convert raw data to (year,month) averaged matrix   
     
-    [x,data,delt] = data2matrix(obj,Y,M,opt.br_win);
-    
+    [~,data,delt] = data2matrix(obj,Y,M,opt.br_win);
     
     
     
@@ -119,7 +118,7 @@ function anf = findanf_epica(obj,Y,M,varargin)
         
         %% use RK4 to solve for P(k) - using altered ENAS 441 code!
         P = RK4_P(Y,M,G,H,delt); 
-        P_final = P(M*99:M*100-1);
+        P_final = P(M*999:M*1000-1);
 
 
         %% find a(k) = sector stability, using P, G, H
@@ -136,9 +135,16 @@ function anf = findanf_epica(obj,Y,M,varargin)
         % compute y(t)
         y = zeros(Y,M);
         for k=1:M
-            for j=1:Y-1
+            for j=1:Y
                 if k == M
+                % last month & last year
+                    if j == Y
+                        y(j,k) = - a(k) * data(j,k) * delt;
+                % last month ONLY (wraparound)
+                    else
                         y(j,k) = data(j+1,1) - data(j,k) - a(k) * data(j,k) * delt;
+                    end
+                % normal case
                 else
                     y(j,k) = data(j,k+1) - data(j,k) - a(k) * data(j,k) * delt;
                 end
@@ -151,32 +157,40 @@ function anf = findanf_epica(obj,Y,M,varargin)
         for k=1:M
             summ_var = 0;
             summ_atc = 0;
-            for j=1:Y-1
+            for j=1:Y
                 
                 % add term to variance
                 summ_var = summ_var + y(j,k)^2;
                 
                 % add term to autocorrelation
-                if k == M       % wrap around to next k=1
-                	summ_atc = summ_atc + y(j,k) * y(j+1,1);
-                else            % normal case
+                
+                if k == M     
+                % last month & last year
+                    if j == Y
+                        summ_atc = summ_atc + y(j,k)^2;
+                % last month ONLY (wraparound)
+                    else
+                        summ_atc = summ_atc + y(j,k) * y(j+1,1);
+                    end
+                % normal case
+                else            
                     summ_atc = summ_atc + y(j,k) * y(j,k+1);
                 end
                 
             end
-            y_var(k) = summ_var / ((Y-1)-1);
-            y_atc(k) = summ_atc / ((Y-1)-1);
+            y_var(k) = summ_var / (Y-1);
+            y_atc(k) = summ_atc / (Y-1);
         end
 
 
         % use y's variance and autocorrelation to estimate noise amplitude
         N = zeros(1,M);
         for k=1:M
-            N2 = (y_var(k) - y_atc(k)) / delt;
-            if N2 < 0
+            Nsq = (y_var(k) - y_atc(k)) / delt;
+            if Nsq < 0
                 N(k) = 0.0;
             else
-                N(k) = sqrt(N2);
+                N(k) = sqrt(Nsq);
             end
         end
 
@@ -296,26 +310,56 @@ function anf = findanf_epica(obj,Y,M,varargin)
             %% a
             nexttile
             plot(a);
-            legend("a(k)");
-            title(sprintf("a(k) for %s, Y=%d M=%d\n",obj.data_name,Y,M));
+            %legend("a(k)");
+            title(sprintf("a(k) - %s, 1D model\n",obj.data_name));
             saveas(gcf,sprintf("%s_a_%d-%d.jpeg",obj.data_name,Y,M));
             
             %% N
             nexttile
             plot(N);
-            legend("N(k)");
-            title(sprintf("N(k) for %s, Y=%d M=%d\n",obj.data_name,Y,M));
+            %legend("N(k)");
+            title(sprintf("N(k) - %s, 1D model\n",obj.data_name));
             saveas(gcf,sprintf("%s_N_%d-%d.jpeg",obj.data_name,Y,M));
 
             %% f
             nexttile
             plot(f);
-            legend("f(tau)");
-            title(sprintf("f(tau) for %s, Y=%d M=%d\n",obj.data_name,Y,M));
+            %legend("f(tau)");
+            title(sprintf("f(tau) - %s, 1D model\n",obj.data_name));
             saveas(gcf,sprintf("%s_f_%d-%d.jpeg",obj.data_name,Y,M));
 
             
         end
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
         
         
@@ -424,7 +468,7 @@ function anf = findanf_epica(obj,Y,M,varargin)
             nexttile
             plot(a);
             legend("a(k)");
-            title(sprintf("a(k) for %s, Y=%d M=%d\n",obj.data_name,Y,M));
+            title(sprintf("a(k) - %s, 1D model\n",obj.data_name));
             saveas(gcf,sprintf("%s_a_%d-%d_est.jpeg",obj.data_name,Y,M));
             if M > 1
                 xlim([1,M]);
@@ -433,7 +477,7 @@ function anf = findanf_epica(obj,Y,M,varargin)
             nexttile
             plot(N);
             legend("N(k)");
-            title(sprintf("N(k) for %s, Y=%d M=%d\n",obj.data_name,Y,M));
+            title(sprintf("N(k) - %s, 1D model\n",obj.data_name));
             saveas(gcf,sprintf("%s_N_%d-%d_est.jpeg",obj.data_name,Y,M));
             if M > 1
                 xlim([1,M]);
@@ -442,7 +486,7 @@ function anf = findanf_epica(obj,Y,M,varargin)
             nexttile
             plot(f);
             legend("f(k)");
-            title(sprintf("f(k) for %s, Y=%d M=%d\n",obj.data_name,Y,M));
+            title(sprintf("f(k) - %s, 1D model\n",obj.data_name));
             saveas(gcf,sprintf("%s_f_%d-%d_est.jpeg",obj.data_name,Y,M));
             if Y > 1
                 xlim([1,Y]);

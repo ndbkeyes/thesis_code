@@ -194,9 +194,9 @@ function abN = coupling_2D(obj1,obj2,Y,M,br_win,plotting)
         
         nexttile
         hold on;
-        plot(a1);
-        plot(b12);
-        plot(a1-b12);
+        plot(a1,'LineWidth',1.2,'Color',[0.4 0.2 0]);
+        plot(b12,'--','LineWidth',1.2,'Color',[0.9 0.6 0]);
+        plot(a1-b12,'LineWidth',2,'Color',[0.8,0.5,0]);
         xlim([1,M]);
         legend("a1","b12","a1 - b12");
         title(sprintf("2D coupled stability for 1) %s, coupled to 2) %s", obj1.data_name, obj2.data_name));
@@ -205,9 +205,9 @@ function abN = coupling_2D(obj1,obj2,Y,M,br_win,plotting)
         % plot for dataset 2
         nexttile
         hold on;
-        plot(a2);
-        plot(b21);
-        plot(a2-b21);
+        plot(a2,'LineWidth',1.2,'Color',[0 0.3 0]);
+        plot(b21,'--','LineWidth',1.2,'Color',[0.5 0.8 0.5]);
+        plot(a2-b21,'LineWidth',2,'Color',[0 0.7 0]);
         xlim([1,M]);
         legend("a2","b21","a2 - b21");
         title(sprintf("2D coupled stability for 2) %s, coupled to 1) %s",  obj2.data_name, obj1.data_name));
@@ -216,11 +216,11 @@ function abN = coupling_2D(obj1,obj2,Y,M,br_win,plotting)
         % plot for noise quantities
         nexttile
         hold on;
-        plot(N1);
-        plot(N2);
+        plot(N1,"LineWidth",1.3,'Color',[0.9 0.5 0]);
+        plot(N2,"LineWidth",1.3,'Color',[0 0.7 0]);
         xlim([1,M]);
         legend("N1","N2");
-        title(sprintf("2D coupled noise for 2) %s, coupled to 1) %s",  obj2.data_name, obj1.data_name));
+        title(sprintf("2D coupled noise for %s and %s", obj1.data_name, obj2.data_name));
 
 
     end
